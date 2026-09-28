@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.BookmarkAdd
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Remove
 import ch.simibu.pace.ui.components.TactileCard
@@ -39,7 +38,6 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,8 +62,7 @@ import ch.simibu.pace.ui.components.TimeDurationWheelPicker
 
 @Composable
 fun QuickStartScreen(
-    onStartSession: () -> Unit,
-    onSaveAsRoutineRequested: (focusMin: Int, focusSec: Int, breakMin: Int, breakSec: Int, rounds: Int, warmupSec: Int) -> Unit
+    onStartSession: () -> Unit
 ) {
     val context = LocalContext.current
     val settingsRepo = PaceApplication.instance.settingsRepository
@@ -76,7 +73,6 @@ fun QuickStartScreen(
     var breakMinutes by remember { mutableIntStateOf(settingsRepo.quickBreakMinutes) }
     var breakSeconds by remember { mutableIntStateOf(settingsRepo.quickBreakSeconds) }
     var iterations by remember { mutableIntStateOf(settingsRepo.quickIterations) }
-    var warmupEnabled by remember { mutableStateOf(settingsRepo.quickWarmupEnabled) }
 
     val scrollState = rememberScrollState()
 
@@ -86,7 +82,6 @@ fun QuickStartScreen(
         settingsRepo.quickBreakMinutes = breakMinutes
         settingsRepo.quickBreakSeconds = breakSeconds
         settingsRepo.quickIterations = iterations
-        settingsRepo.quickWarmupEnabled = warmupEnabled
     }
 
     Column(
@@ -236,44 +231,6 @@ fun QuickStartScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Warm-up toggle tactile card
-        TactileCard(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(22.dp),
-            elevation = 4.dp
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 14.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Text(
-                        text = stringResource(R.string.warmup_toggle),
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text = stringResource(R.string.warmup_time, 10),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Switch(
-                    checked = warmupEnabled,
-                    onCheckedChange = {
-                        warmupEnabled = it
-                        updateAndPersist()
-                    }
-                )
-            }
-        }
-
         Spacer(modifier = Modifier.height(28.dp))
 
         // Big Primary Action: Start Session with Tactile Pill Button & Brand Gradient
@@ -284,13 +241,12 @@ fun QuickStartScreen(
                 .clickable {
                     val totalFocus = (focusMinutes * 60) + focusSeconds
                     val totalBreak = (breakMinutes * 60) + breakSeconds
-                    val warmup = if (warmupEnabled) 10 else 0
 
                     timerEngine.startQuickTimer(
                         focusSec = if (totalFocus > 0) totalFocus else 45,
                         breakSec = if (totalBreak > 0) totalBreak else 15,
                         rounds = iterations,
-                        warmupSec = warmup,
+                        warmupSec = 0,
                         focusSound = settingsRepo.focusSoundScheme.value,
                         focusRepeats = settingsRepo.focusSoundRepeats.value,
                         breakSound = settingsRepo.breakSoundScheme.value,
@@ -324,47 +280,6 @@ fun QuickStartScreen(
                         color = androidx.compose.ui.graphics.Color.White
                     )
                 }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(14.dp))
-
-        // Save as Routine Tactile Card
-        TactileCard(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(52.dp)
-                .clickable {
-                    onSaveAsRoutineRequested(
-                        focusMinutes,
-                        focusSeconds,
-                        breakMinutes,
-                        breakSeconds,
-                        iterations,
-                        if (warmupEnabled) 10 else 0
-                    )
-                },
-            shape = RoundedCornerShape(18.dp),
-            elevation = 4.dp
-        ) {
-            Row(
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    Icons.Rounded.BookmarkAdd,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurface
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = stringResource(R.string.save_as_routine),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
             }
         }
 

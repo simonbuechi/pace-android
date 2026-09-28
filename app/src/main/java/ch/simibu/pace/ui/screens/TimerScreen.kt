@@ -3,23 +3,20 @@ package ch.simibu.pace.ui.screens
 import android.app.Activity
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -44,21 +41,25 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
@@ -70,17 +71,15 @@ import ch.simibu.pace.ui.components.CircularTimerRing
 import ch.simibu.pace.ui.components.TactileCard
 import ch.simibu.pace.ui.components.TactilePillButton
 import ch.simibu.pace.ui.components.TactileSunkenWell
+import ch.simibu.pace.ui.components.isTactileThemeDark
 import ch.simibu.pace.ui.theme.PaceBrandGradient
-import ch.simibu.pace.ui.theme.PaceDarkShadowDark
-import ch.simibu.pace.ui.theme.PaceDarkSurfaceSunken
-import ch.simibu.pace.ui.theme.PaceLightShadowDark
-import ch.simibu.pace.ui.theme.PaceLightSurfaceSunken
 import ch.simibu.pace.ui.theme.PaceMagenta
 import ch.simibu.pace.ui.theme.PaceRaspberry
 import ch.simibu.pace.ui.theme.PhaseBreakColor
 import ch.simibu.pace.ui.theme.PhaseCompletedColor
 import ch.simibu.pace.ui.theme.PhaseCooldownColor
 import ch.simibu.pace.ui.theme.PhaseWarmupColor
+import kotlinx.coroutines.delay
 
 @Composable
 fun TimerScreen(
@@ -94,6 +93,25 @@ fun TimerScreen(
     val screenAwake by settingsRepo.screenAwake.collectAsState()
 
     var showExitDialog by remember { mutableStateOf(false) }
+
+    // When timer is running, buttons are hidden by default. Once clicked, buttons appear.
+    // If paused or completed, buttons stay visible.
+    var controlsVisible by remember { mutableStateOf(timerState.isPaused || !timerState.isRunning || timerState.isCompleted) }
+
+    // Auto-hide controls after 4 seconds when timer is running and unpaused
+    LaunchedEffect(controlsVisible, timerState.isRunning, timerState.isPaused, timerState.isCompleted) {
+        if (controlsVisible && timerState.isRunning && !timerState.isPaused && !timerState.isCompleted) {
+            delay(4000L)
+            controlsVisible = false
+        }
+    }
+
+    // Always reveal controls when timer pauses
+    LaunchedEffect(timerState.isPaused) {
+        if (timerState.isPaused) {
+            controlsVisible = true
+        }
+    }
 
     // Screen Keep Awake effect
     DisposableEffect(screenAwake) {
@@ -129,7 +147,7 @@ fun TimerScreen(
         label = "bg_phase_color"
     )
 
-    val isDark = ch.simibu.pace.ui.components.isTactileThemeDark()
+    val isDark = isTactileThemeDark()
 
     BoxWithConstraints(
         modifier = Modifier
@@ -143,60 +161,271 @@ fun TimerScreen(
                     )
                 )
             )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+            ) {
+                if (!timerState.isCompleted) {
+                    controlsVisible = !controlsVisible
+                }
+            }
             .systemBarsPadding()
     ) {
-        val isLandscape = maxWidth > maxHeight
-
-        if (isLandscape) {
-            // Widescreen / Landscape Layout: Maximal font size readable across the room
-            LandscapeTimerLayout(
-                timerState = timerState,
-                phaseColor = animatedPhaseColor,
-                isDark = isDark,
-                onExitRequest = {
-                    if (timerState.isRunning && !timerState.isCompleted) {
-                        showExitDialog = true
-                    } else {
-                        onExitTimer()
-                    }
-                },
-                onTogglePlay = { timerEngine.togglePauseResume() },
-                onSkip = { timerEngine.skipPhase() },
-                onRestart = {
-                    timerEngine.restart()
-                    PaceTimerService.start(context)
-                },
-                onDone = {
-                    PaceTimerService.stop(context)
-                    onExitTimer()
-                }
-            )
+        val screenWidth = maxWidth
+        val screenHeight = maxHeight
+        val isLandscape = screenWidth > screenHeight
+        val ringDiameter = if (isLandscape) {
+            min(screenHeight - 20.dp, screenWidth * 0.65f)
         } else {
-            // Portrait Layout: Centered ring with maximal digit size
-            PortraitTimerLayout(
-                timerState = timerState,
-                phaseColor = animatedPhaseColor,
-                isDark = isDark,
-                maxWidth = maxWidth,
-                maxHeight = maxHeight,
-                onExitRequest = {
-                    if (timerState.isRunning && !timerState.isCompleted) {
-                        showExitDialog = true
-                    } else {
+            min(screenWidth - 12.dp, screenHeight * 0.64f)
+        }
+
+        // Layer 1: Background Circular Countdown Ring
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularTimerRing(
+                modifier = Modifier.size(ringDiameter),
+                progress = timerState.progress,
+                phase = timerState.phase,
+                remainingSeconds = timerState.remainingSecondsInPhase,
+                accentColor = PaceRaspberry,
+                strokeWidth = 18.dp
+            )
+        }
+
+        // Layer 2: Center Typography & Information (Giant Digits filling screen)
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+            ) {
+                // Phase Badge
+                TactileSunkenWell(
+                    shape = RoundedCornerShape(20.dp),
+                    modifier = Modifier.padding(bottom = if (isLandscape) 6.dp else 14.dp)
+                ) {
+                    Text(
+                        text = stringResource(timerState.phase.titleRes).uppercase(),
+                        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
+                        fontWeight = FontWeight.ExtraBold,
+                        color = phaseColor,
+                        modifier = Modifier.padding(horizontal = 22.dp, vertical = if (isLandscape) 5.dp else 8.dp)
+                    )
+                }
+
+                // Giant Countdown Digits filling the screen
+                AutoSizingTimerText(
+                    text = if (timerState.isCompleted) "✓" else timerState.formattedRemainingTime,
+                    color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground,
+                    maxFontSize = if (isLandscape) (screenHeight.value * 0.44f).sp else (screenWidth.value * 0.38f).sp
+                )
+
+                // Round Indicator / Subtitle
+                if (!timerState.isCompleted) {
+                    Spacer(modifier = Modifier.height(if (isLandscape) 4.dp else 12.dp))
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(
+                            text = stringResource(
+                                R.string.round_indicator,
+                                timerState.currentRound,
+                                timerState.totalRounds
+                            ),
+                            style = if (isLandscape) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        if (isLandscape && timerState.routineName.isNotBlank()) {
+                            Text(
+                                text = "  •  " + timerState.routineName,
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Medium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Layer 3: Controls Overlay (Shown on click, hidden when running)
+        // Top App Bar
+        AnimatedVisibility(
+            visible = (controlsVisible || timerState.isPaused) && !timerState.isCompleted,
+            enter = fadeIn(tween(250)),
+            exit = fadeOut(tween(250)),
+            modifier = Modifier.align(Alignment.TopCenter)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = if (isLandscape) 6.dp else 12.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    TactileCard(
+                        modifier = Modifier
+                            .size(if (isLandscape) 42.dp else 46.dp)
+                            .clickable {
+                                if (timerState.isRunning && !timerState.isCompleted) {
+                                    showExitDialog = true
+                                } else {
+                                    onExitTimer()
+                                }
+                            },
+                        shape = CircleShape,
+                        elevation = 4.dp
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Icon(
+                                Icons.Rounded.Close,
+                                contentDescription = "Exit timer",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
+                    }
+                    if (isLandscape && timerState.routineName.isNotBlank()) {
+                        Spacer(modifier = Modifier.width(14.dp))
+                        Text(
+                            text = timerState.routineName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                }
+
+                if (!isLandscape) {
+                    Text(
+                        text = timerState.routineName.ifBlank { stringResource(R.string.app_short_name) },
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                    Spacer(modifier = Modifier.size(46.dp))
+                }
+            }
+        }
+
+        // Bottom Controls Row
+        AnimatedVisibility(
+            visible = (controlsVisible || timerState.isPaused) && !timerState.isCompleted,
+            enter = fadeIn(tween(250)),
+            exit = fadeOut(tween(250)),
+            modifier = Modifier.align(Alignment.BottomCenter)
+        ) {
+            val buttonPadding = if (isLandscape) 6.dp else 24.dp
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = buttonPadding),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // Tactile Restart Button
+                TactileCard(
+                    modifier = Modifier
+                        .size(if (isLandscape) 46.dp else 60.dp)
+                        .clickable {
+                            timerEngine.restart()
+                            PaceTimerService.start(context)
+                            controlsVisible = false
+                        },
+                    shape = CircleShape,
+                    elevation = 6.dp
+                ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Rounded.Replay,
+                            contentDescription = stringResource(R.string.btn_restart),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(if (isLandscape) 22.dp else 28.dp)
+                        )
+                    }
+                }
+
+                // Tactile Play/Pause Pill Button with Brand Gradient
+                TactilePillButton(
+                    modifier = Modifier
+                        .size(if (isLandscape) 64.dp else 86.dp)
+                        .clickable {
+                            val wasPaused = timerState.isPaused
+                            timerEngine.togglePauseResume()
+                            if (wasPaused) {
+                                controlsVisible = false
+                            }
+                        },
+                    shape = CircleShape,
+                    elevation = 10.dp
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(PaceBrandGradient),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = if (timerState.isPaused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
+                            contentDescription = if (timerState.isPaused) stringResource(R.string.btn_resume) else stringResource(R.string.btn_pause),
+                            tint = Color.White,
+                            modifier = Modifier.size(if (isLandscape) 34.dp else 46.dp)
+                        )
+                    }
+                }
+
+                // Tactile Skip Button
+                TactileCard(
+                    modifier = Modifier
+                        .size(if (isLandscape) 46.dp else 60.dp)
+                        .clickable {
+                            timerEngine.skipPhase()
+                        },
+                    shape = CircleShape,
+                    elevation = 6.dp
+                ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Icon(
+                            Icons.Rounded.FastForward,
+                            contentDescription = stringResource(R.string.btn_skip),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(if (isLandscape) 22.dp else 28.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // Completed State Actions
+        if (timerState.isCompleted) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                CompletedActions(
+                    totalRounds = timerState.totalRounds,
+                    onRestart = {
+                        timerEngine.restart()
+                        PaceTimerService.start(context)
+                    },
+                    onDone = {
+                        PaceTimerService.stop(context)
                         onExitTimer()
                     }
-                },
-                onTogglePlay = { timerEngine.togglePauseResume() },
-                onSkip = { timerEngine.skipPhase() },
-                onRestart = {
-                    timerEngine.restart()
-                    PaceTimerService.start(context)
-                },
-                onDone = {
-                    PaceTimerService.stop(context)
-                    onExitTimer()
-                }
-            )
+                )
+            }
         }
     }
 
@@ -229,454 +458,51 @@ fun TimerScreen(
 }
 
 @Composable
-private fun PortraitTimerLayout(
-    timerState: ch.simibu.pace.model.TimerState,
-    phaseColor: Color,
-    isDark: Boolean,
-    maxWidth: androidx.compose.ui.unit.Dp,
-    maxHeight: androidx.compose.ui.unit.Dp,
-    onExitRequest: () -> Unit,
-    onTogglePlay: () -> Unit,
-    onSkip: () -> Unit,
-    onRestart: () -> Unit,
-    onDone: () -> Unit
+private fun AutoSizingTimerText(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+    maxFontSize: TextUnit,
+    minFontSize: TextUnit = 40.sp
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp, vertical = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        // Top App Bar
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TactileCard(
-                modifier = Modifier
-                    .size(46.dp)
-                    .clickable { onExitRequest() },
-                shape = CircleShape,
-                elevation = 4.dp
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Icon(
-                        Icons.Rounded.Close,
-                        contentDescription = "Exit timer",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
+    var fontSizeValue by remember(text.length, maxFontSize) { mutableFloatStateOf(maxFontSize.value) }
+    var readyToDraw by remember(text.length, maxFontSize) { mutableStateOf(false) }
 
-            Text(
-                text = timerState.routineName.ifBlank { stringResource(R.string.app_short_name) },
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
+    Text(
+        text = text,
+        modifier = modifier.drawWithContent {
+            if (readyToDraw) {
+                drawContent()
+            }
+        },
+        style = MaterialTheme.typography.displayLarge.copy(
+            fontSize = fontSizeValue.sp,
+            lineHeight = fontSizeValue.sp,
+            fontFamily = FontFamily.Default,
+            letterSpacing = (-1).sp,
+            shadow = Shadow(
+                color = MaterialTheme.colorScheme.background.copy(alpha = 0.8f),
+                offset = Offset(0f, 2f),
+                blurRadius = 6f
             )
-
-            Spacer(modifier = Modifier.size(46.dp))
-        }
-
-        // Phase & Round Header
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            TactileSunkenWell(
-                shape = RoundedCornerShape(20.dp),
-                modifier = Modifier.padding(bottom = 10.dp)
-            ) {
-                Text(
-                    text = stringResource(timerState.phase.titleRes).uppercase(),
-                    style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
-                    fontWeight = FontWeight.ExtraBold,
-                    color = phaseColor,
-                    modifier = Modifier.padding(horizontal = 22.dp, vertical = 9.dp)
-                )
-            }
-
-            if (!timerState.isCompleted) {
-                Text(
-                    text = stringResource(
-                        R.string.round_indicator,
-                        timerState.currentRound,
-                        timerState.totalRounds
-                    ),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-        }
-
-        // Center Ring with Maximal Display Typography
-        val ringDiameter = min(maxWidth - 32.dp, maxHeight * 0.44f).coerceAtMost(350.dp)
-        val digitFontSize = (ringDiameter.value * 0.27f).sp
-
-        Box(
-            modifier = Modifier
-                .size(ringDiameter)
-                .align(Alignment.CenterHorizontally),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularTimerRing(
-                modifier = Modifier.fillMaxSize(),
-                progress = timerState.progress,
-                phase = timerState.phase,
-                remainingSeconds = timerState.remainingSecondsInPhase,
-                accentColor = PaceRaspberry,
-                strokeWidth = 18.dp
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    AnimatedContent(
-                        targetState = timerState.formattedRemainingTime,
-                        transitionSpec = { fadeIn(tween(120)) togetherWith fadeOut(tween(120)) },
-                        label = "timer_digits_portrait"
-                    ) { digits ->
-                        Text(
-                            text = if (timerState.isCompleted) "✓" else digits,
-                            style = MaterialTheme.typography.displayLarge.copy(
-                                fontSize = digitFontSize,
-                                fontFamily = FontFamily.Default
-                            ),
-                            fontWeight = FontWeight.Black,
-                            color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-
-                    if (!timerState.isCompleted) {
-                        Text(
-                            text = stringResource(R.string.time_remaining),
-                            style = MaterialTheme.typography.labelMedium,
-                            fontWeight = FontWeight.Medium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            }
-        }
-
-        // Bottom Controls
-        if (timerState.isCompleted) {
-            CompletedActions(
-                totalRounds = timerState.totalRounds,
-                onRestart = onRestart,
-                onDone = onDone
-            )
-        } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 20.dp),
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                // Tactile Restart Button
-                TactileCard(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clickable { onRestart() },
-                    shape = CircleShape,
-                    elevation = 6.dp
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(
-                            Icons.Rounded.Replay,
-                            contentDescription = stringResource(R.string.btn_restart),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
-
-                // Tactile Play/Pause Pill Button with Brand Gradient
-                TactilePillButton(
-                    modifier = Modifier
-                        .size(86.dp)
-                        .clickable { onTogglePlay() },
-                    shape = CircleShape,
-                    elevation = 10.dp
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(PaceBrandGradient),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (timerState.isPaused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
-                            contentDescription = if (timerState.isPaused) stringResource(R.string.btn_resume) else stringResource(R.string.btn_pause),
-                            tint = Color.White,
-                            modifier = Modifier.size(46.dp)
-                        )
-                    }
-                }
-
-                // Tactile Skip Button
-                TactileCard(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clickable { onSkip() },
-                    shape = CircleShape,
-                    elevation = 6.dp
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(
-                            Icons.Rounded.FastForward,
-                            contentDescription = stringResource(R.string.btn_skip),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.size(28.dp)
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun LandscapeTimerLayout(
-    timerState: ch.simibu.pace.model.TimerState,
-    phaseColor: Color,
-    isDark: Boolean,
-    onExitRequest: () -> Unit,
-    onTogglePlay: () -> Unit,
-    onSkip: () -> Unit,
-    onRestart: () -> Unit,
-    onDone: () -> Unit
-) {
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 28.dp, vertical = 14.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        // Left & Center Panoramic Display (Giant Digits readable across gym room)
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.Start
-        ) {
-            // Header: Phase badge & Round Indicator
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(top = 4.dp)
-            ) {
-                TactileSunkenWell(
-                    shape = RoundedCornerShape(16.dp)
-                ) {
-                    Text(
-                        text = stringResource(timerState.phase.titleRes).uppercase(),
-                        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
-                        fontWeight = FontWeight.ExtraBold,
-                        color = phaseColor,
-                        modifier = Modifier.padding(horizontal = 18.dp, vertical = 7.dp)
-                    )
-                }
-
-                if (!timerState.isCompleted) {
-                    Text(
-                        text = stringResource(
-                            R.string.round_indicator,
-                            timerState.currentRound,
-                            timerState.totalRounds
-                        ),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Text(
-                    text = timerState.routineName.ifBlank { stringResource(R.string.app_short_name) },
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                )
-            }
-
-            // Giant Countdown Digits (Maximal font size for widescreen view)
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                if (timerState.isCompleted) {
-                    Column {
-                        Text(
-                            text = stringResource(R.string.session_finished_title),
-                            style = MaterialTheme.typography.displayMedium,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = PhaseCompletedColor
-                        )
-                        Text(
-                            text = stringResource(R.string.session_finished_msg, timerState.totalRounds),
-                            style = MaterialTheme.typography.titleLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+        ),
+        fontWeight = FontWeight.Black,
+        color = color,
+        maxLines = 1,
+        softWrap = false,
+        onTextLayout = { textLayoutResult ->
+            if (textLayoutResult.didOverflowWidth || textLayoutResult.didOverflowHeight) {
+                val nextSize = fontSizeValue * 0.93f
+                if (nextSize >= minFontSize.value) {
+                    fontSizeValue = nextSize
                 } else {
-                    AnimatedContent(
-                        targetState = timerState.formattedRemainingTime,
-                        transitionSpec = { fadeIn(tween(100)) togetherWith fadeOut(tween(100)) },
-                        label = "timer_digits_landscape"
-                    ) { digits ->
-                        Text(
-                            text = digits,
-                            style = MaterialTheme.typography.displayLarge.copy(
-                                fontSize = 135.sp,
-                                lineHeight = 135.sp,
-                                letterSpacing = (-2).sp
-                            ),
-                            fontWeight = FontWeight.Black,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                }
-            }
-
-            // Tactile Smooth Horizontal Progress Bar
-            val sunkenTrackBg = if (isDark) PaceDarkSurfaceSunken else PaceLightSurfaceSunken
-            val sunkenBorder = if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.06f)
-
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 8.dp)
-                    .height(14.dp)
-                    .clip(RoundedCornerShape(7.dp))
-                    .background(sunkenTrackBg)
-                    .border(1.dp, sunkenBorder, RoundedCornerShape(7.dp))
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .fillMaxWidth(timerState.progress.coerceIn(0f, 1f))
-                        .background(PaceBrandGradient)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.width(32.dp))
-
-        // Right Vertical Controls Panel
-        Column(
-            modifier = Modifier
-                .fillMaxHeight()
-                .padding(vertical = 4.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            // Exit Button
-            TactileCard(
-                modifier = Modifier
-                    .size(48.dp)
-                    .clickable { onExitRequest() },
-                shape = CircleShape,
-                elevation = 4.dp
-            ) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Icon(
-                        Icons.Rounded.Close,
-                        contentDescription = "Exit timer",
-                        tint = MaterialTheme.colorScheme.onBackground
-                    )
-                }
-            }
-
-            if (timerState.isCompleted) {
-                TactilePillButton(
-                    modifier = Modifier
-                        .height(56.dp)
-                        .clickable { onRestart() },
-                    shape = RoundedCornerShape(18.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxHeight()
-                            .background(PaceBrandGradient)
-                            .padding(horizontal = 24.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(Icons.Rounded.Replay, contentDescription = null, tint = Color.White)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(stringResource(R.string.btn_restart), color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                    }
+                    readyToDraw = true
                 }
             } else {
-                // Restart button
-                TactileCard(
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clickable { onRestart() },
-                    shape = CircleShape,
-                    elevation = 6.dp
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(
-                            Icons.Rounded.Replay,
-                            contentDescription = stringResource(R.string.btn_restart),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-
-                // Main Play/Pause Pill Button
-                TactilePillButton(
-                    modifier = Modifier
-                        .size(76.dp)
-                        .clickable { onTogglePlay() },
-                    shape = CircleShape,
-                    elevation = 10.dp
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(PaceBrandGradient),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (timerState.isPaused) Icons.Rounded.PlayArrow else Icons.Rounded.Pause,
-                            contentDescription = if (timerState.isPaused) stringResource(R.string.btn_resume) else stringResource(R.string.btn_pause),
-                            tint = Color.White,
-                            modifier = Modifier.size(40.dp)
-                        )
-                    }
-                }
-
-                // Skip button
-                TactileCard(
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clickable { onSkip() },
-                    shape = CircleShape,
-                    elevation = 6.dp
-                ) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(
-                            Icons.Rounded.FastForward,
-                            contentDescription = stringResource(R.string.btn_skip),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                readyToDraw = true
             }
         }
-    }
+    )
 }
 
 @Composable

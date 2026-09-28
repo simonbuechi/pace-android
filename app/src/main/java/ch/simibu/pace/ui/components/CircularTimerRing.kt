@@ -46,8 +46,8 @@ fun CircularTimerRing(
     phase: TimerPhase,
     remainingSeconds: Int,
     accentColor: Color,
-    strokeWidth: Dp = 16.dp,
-    content: @Composable () -> Unit
+    strokeWidth: Dp = 18.dp,
+    content: (@Composable () -> Unit)? = null
 ) {
     val animatedProgress by animateFloatAsState(
         targetValue = progress.coerceIn(0f, 1f),
@@ -101,7 +101,7 @@ fun CircularTimerRing(
     Box(
         modifier = modifier
             .scale(pulseScale)
-            .padding(16.dp),
+            .padding(10.dp),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -154,7 +154,7 @@ fun CircularTimerRing(
             }
         }
 
-        // Inner Content
-        content()
+        // Optional Inner Content
+        content?.invoke()
     }
 }

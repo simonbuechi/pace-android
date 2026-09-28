@@ -31,7 +31,6 @@ import ch.simibu.pace.model.Routine
 import ch.simibu.pace.ui.components.PaceBottomBar
 import ch.simibu.pace.ui.components.PaceScreen
 import ch.simibu.pace.ui.screens.QuickStartScreen
-import ch.simibu.pace.ui.screens.RoutineEditorDialog
 import ch.simibu.pace.ui.screens.RoutinesScreen
 import ch.simibu.pace.ui.screens.SettingsScreen
 import ch.simibu.pace.ui.screens.TimerScreen
@@ -98,9 +97,6 @@ fun PaceAmigoApp(isTimerActive: Boolean) {
     var currentTab by remember { mutableStateOf(PaceScreen.QUICK_START.route) }
     var userInTimerView by remember { mutableStateOf(false) }
 
-    // Dialog state for "Save as Routine" from quick start
-    var pendingSaveRoutineParams by remember { mutableStateOf<RoutineSaveParams?>(null) }
-
     val shouldShowFullscreenTimer = isTimerActive || userInTimerView
 
     AnimatedContent(
@@ -133,16 +129,6 @@ fun PaceAmigoApp(isTimerActive: Boolean) {
                             QuickStartScreen(
                                 onStartSession = {
                                     userInTimerView = true
-                                },
-                                onSaveAsRoutineRequested = { focusMin, focusSec, breakMin, breakSec, rounds, warmupSec ->
-                                    pendingSaveRoutineParams = RoutineSaveParams(
-                                        focusMin = focusMin,
-                                        focusSec = focusSec,
-                                        breakMin = breakMin,
-                                        breakSec = breakSec,
-                                        rounds = rounds,
-                                        warmupSec = warmupSec
-                                    )
                                 }
                             )
                         }
@@ -159,33 +145,6 @@ fun PaceAmigoApp(isTimerActive: Boolean) {
                     }
                 }
             }
-
-            // Save Routine Dialog invoked from Quick Start
-            pendingSaveRoutineParams?.let { params ->
-                RoutineEditorDialog(
-                    defaultFocusMin = params.focusMin,
-                    defaultFocusSec = params.focusSec,
-                    defaultBreakMin = params.breakMin,
-                    defaultBreakSec = params.breakSec,
-                    defaultRounds = params.rounds,
-                    defaultWarmupSec = params.warmupSec,
-                    onDismiss = { pendingSaveRoutineParams = null },
-                    onSave = { newRoutine ->
-                        PaceApplication.instance.routineRepository.saveRoutine(newRoutine)
-                        pendingSaveRoutineParams = null
-                        currentTab = PaceScreen.ROUTINES.route
-                    }
-                )
-            }
         }
     }
 }
-
-private data class RoutineSaveParams(
-    val focusMin: Int,
-    val focusSec: Int,
-    val breakMin: Int,
-    val breakSec: Int,
-    val rounds: Int,
-    val warmupSec: Int
-)
