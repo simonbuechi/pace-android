@@ -75,7 +75,7 @@ class PaceTimerService : Service() {
                         if (hapticOn) soundManager.vibrateShort()
                     }
                     is TimerEvent.PhaseTransition -> {
-                        if (soundOn) soundManager.playSchemeSound(event.scheme)
+                        if (soundOn) soundManager.playSchemeSound(event.scheme, repeats = event.repeats)
                         if (hapticOn) soundManager.vibratePhaseTransition()
                     }
                     is TimerEvent.Completed -> {

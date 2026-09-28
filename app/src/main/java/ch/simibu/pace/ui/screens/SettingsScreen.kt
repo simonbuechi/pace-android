@@ -1,5 +1,10 @@
 package ch.simibu.pace.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,14 +21,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.LightMode
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Smartphone
 import androidx.compose.material.icons.rounded.Translate
 import androidx.compose.material.icons.rounded.Vibration
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuAnchorType
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
@@ -32,6 +46,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -40,15 +57,25 @@ import androidx.compose.ui.unit.dp
 import ch.simibu.pace.PaceApplication
 import ch.simibu.pace.R
 import ch.simibu.pace.data.SettingsRepository
+import ch.simibu.pace.model.SoundScheme
 import ch.simibu.pace.ui.components.TactileCard
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen() {
     val settingsRepo = PaceApplication.instance.settingsRepository
+    val soundManager = PaceApplication.instance.soundManager
     val themeMode by settingsRepo.themeMode.collectAsState()
     val soundEnabled by settingsRepo.soundEnabled.collectAsState()
+    val focusSoundScheme by settingsRepo.focusSoundScheme.collectAsState()
+    val focusSoundRepeats by settingsRepo.focusSoundRepeats.collectAsState()
+    val breakSoundScheme by settingsRepo.breakSoundScheme.collectAsState()
+    val breakSoundRepeats by settingsRepo.breakSoundRepeats.collectAsState()
     val vibrationEnabled by settingsRepo.vibrationEnabled.collectAsState()
     val screenAwake by settingsRepo.screenAwake.collectAsState()
+
+    var focusDropdownExpanded by remember { mutableStateOf(false) }
+    var breakDropdownExpanded by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
@@ -163,6 +190,264 @@ fun SettingsScreen() {
                         checked = soundEnabled,
                         onCheckedChange = { settingsRepo.setSoundEnabled(it) }
                     )
+                }
+
+                // Sound choices: Focus and Break with preview & 1-5x repeats
+                AnimatedVisibility(
+                    visible = soundEnabled,
+                    enter = fadeIn() + expandVertically(),
+                    exit = fadeOut() + shrinkVertically()
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+
+                        // Focus Sound
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.setting_focus_sound),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = stringResource(R.string.setting_focus_sound_desc),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                ExposedDropdownMenuBox(
+                                    expanded = focusDropdownExpanded,
+                                    onExpandedChange = { focusDropdownExpanded = it },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    OutlinedTextField(
+                                        value = stringResource(focusSoundScheme.titleRes),
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        label = { Text(stringResource(R.string.setting_focus_sound)) },
+                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = focusDropdownExpanded) },
+                                        modifier = Modifier
+                                            .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                                            .fillMaxWidth(),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = focusDropdownExpanded,
+                                        onDismissRequest = { focusDropdownExpanded = false }
+                                    ) {
+                                        SoundScheme.entries.forEach { scheme ->
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(scheme.titleRes)) },
+                                                onClick = {
+                                                    settingsRepo.setFocusSoundScheme(scheme)
+                                                    focusDropdownExpanded = false
+                                                    if (scheme != SoundScheme.NONE) {
+                                                        soundManager.playSchemeSound(scheme, repeats = focusSoundRepeats)
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        soundManager.playSchemeSound(focusSoundScheme, repeats = focusSoundRepeats)
+                                    },
+                                    enabled = focusSoundScheme != SoundScheme.NONE,
+                                    modifier = Modifier.size(52.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.PlayArrow,
+                                        contentDescription = stringResource(R.string.setting_focus_sound)
+                                    )
+                                }
+                            }
+
+                            // Focus Repeat Count (1-5)
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.setting_sound_repeats),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = if (focusSoundRepeats == 1) {
+                                            stringResource(R.string.repeats_count_1)
+                                        } else {
+                                            stringResource(R.string.repeats_count_n, focusSoundRepeats)
+                                        },
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                SingleChoiceSegmentedButtonRow(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    (1..5).forEachIndexed { index, count ->
+                                        SegmentedButton(
+                                            shape = SegmentedButtonDefaults.itemShape(index = index, count = 5),
+                                            onClick = {
+                                                settingsRepo.setFocusSoundRepeats(count)
+                                                if (focusSoundScheme != SoundScheme.NONE) {
+                                                    soundManager.playSchemeSound(focusSoundScheme, repeats = count)
+                                                }
+                                            },
+                                            selected = focusSoundRepeats == count
+                                        ) {
+                                            Text("${count}x")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+
+                        // Break Sound
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Column {
+                                Text(
+                                    text = stringResource(R.string.setting_break_sound),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Text(
+                                    text = stringResource(R.string.setting_break_sound_desc),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                ExposedDropdownMenuBox(
+                                    expanded = breakDropdownExpanded,
+                                    onExpandedChange = { breakDropdownExpanded = it },
+                                    modifier = Modifier.weight(1f)
+                                ) {
+                                    OutlinedTextField(
+                                        value = stringResource(breakSoundScheme.titleRes),
+                                        onValueChange = {},
+                                        readOnly = true,
+                                        label = { Text(stringResource(R.string.setting_break_sound)) },
+                                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = breakDropdownExpanded) },
+                                        modifier = Modifier
+                                            .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                                            .fillMaxWidth(),
+                                        shape = RoundedCornerShape(12.dp)
+                                    )
+                                    ExposedDropdownMenu(
+                                        expanded = breakDropdownExpanded,
+                                        onDismissRequest = { breakDropdownExpanded = false }
+                                    ) {
+                                        SoundScheme.entries.forEach { scheme ->
+                                            DropdownMenuItem(
+                                                text = { Text(stringResource(scheme.titleRes)) },
+                                                onClick = {
+                                                    settingsRepo.setBreakSoundScheme(scheme)
+                                                    breakDropdownExpanded = false
+                                                    if (scheme != SoundScheme.NONE) {
+                                                        soundManager.playSchemeSound(scheme, repeats = breakSoundRepeats)
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                }
+
+                                FilledTonalIconButton(
+                                    onClick = {
+                                        soundManager.playSchemeSound(breakSoundScheme, repeats = breakSoundRepeats)
+                                    },
+                                    enabled = breakSoundScheme != SoundScheme.NONE,
+                                    modifier = Modifier.size(52.dp)
+                                ) {
+                                    Icon(
+                                        Icons.Rounded.PlayArrow,
+                                        contentDescription = stringResource(R.string.setting_break_sound)
+                                    )
+                                }
+                            }
+
+                            // Break Repeat Count (1-5)
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.setting_sound_repeats),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Text(
+                                        text = if (breakSoundRepeats == 1) {
+                                            stringResource(R.string.repeats_count_1)
+                                        } else {
+                                            stringResource(R.string.repeats_count_n, breakSoundRepeats)
+                                        },
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(6.dp))
+                                SingleChoiceSegmentedButtonRow(
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    (1..5).forEachIndexed { index, count ->
+                                        SegmentedButton(
+                                            shape = SegmentedButtonDefaults.itemShape(index = index, count = 5),
+                                            onClick = {
+                                                settingsRepo.setBreakSoundRepeats(count)
+                                                if (breakSoundScheme != SoundScheme.NONE) {
+                                                    soundManager.playSchemeSound(breakSoundScheme, repeats = count)
+                                                }
+                                            },
+                                            selected = breakSoundRepeats == count
+                                        ) {
+                                            Text("${count}x")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        HorizontalDivider(
+                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                        )
+                    }
                 }
 
                 // Vibration switch

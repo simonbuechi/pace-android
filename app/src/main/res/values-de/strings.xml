@@ -79,6 +79,14 @@
     <string name="theme_dark">Dunkel</string>
     <string name="setting_sound_volume">Lautstärke</string>
     <string name="setting_sound_desc">Signaltöne bei Runden- und Phasenwechsel</string>
+    <string name="setting_focus_sound">Fokus-Signalton</string>
+    <string name="setting_focus_sound_desc">Signalton beim Start der Fokus-Phase</string>
+    <string name="setting_break_sound">Pausen-Signalton</string>
+    <string name="setting_break_sound_desc">Signalton beim Start der Pausen-Phase</string>
+    <string name="setting_sound_repeats">Signalton wiederholen</string>
+    <string name="setting_sound_repeats_desc">Häufigkeit des Signaltons (1–5)</string>
+    <string name="repeats_count_1">1-mal</string>
+    <string name="repeats_count_n">%d-mal</string>
     <string name="setting_vibration">Vibration &amp; Haptik</string>
     <string name="setting_vibration_desc">Haptisches Feedback bei Countdown und Phasenwechsel</string>
     <string name="setting_screen_awake">Bildschirm aktiv halten</string>

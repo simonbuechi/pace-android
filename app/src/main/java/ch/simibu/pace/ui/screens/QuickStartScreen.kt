@@ -291,7 +291,10 @@ fun QuickStartScreen(
                         breakSec = if (totalBreak > 0) totalBreak else 15,
                         rounds = iterations,
                         warmupSec = warmup,
-                        sound = SoundScheme.BEEP,
+                        focusSound = settingsRepo.focusSoundScheme.value,
+                        focusRepeats = settingsRepo.focusSoundRepeats.value,
+                        breakSound = settingsRepo.breakSoundScheme.value,
+                        breakRepeats = settingsRepo.breakSoundRepeats.value,
                         color = ColorSchemeOption.PACE
                     )
                     PaceTimerService.start(context)

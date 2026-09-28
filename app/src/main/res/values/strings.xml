@@ -79,6 +79,14 @@
     <string name="theme_dark">Dark</string>
     <string name="setting_sound_volume">Sound Volume</string>
     <string name="setting_sound_desc">Audio cues on round and countdown transitions</string>
+    <string name="setting_focus_sound">Focus Sound</string>
+    <string name="setting_focus_sound_desc">Sound played when focus phase begins</string>
+    <string name="setting_break_sound">Break Sound</string>
+    <string name="setting_break_sound_desc">Sound played when break phase begins</string>
+    <string name="setting_sound_repeats">Repeat Sound</string>
+    <string name="setting_sound_repeats_desc">Number of times sound is repeated (1–5)</string>
+    <string name="repeats_count_1">1 time</string>
+    <string name="repeats_count_n">%d times</string>
     <string name="setting_vibration">Vibration &amp; Haptics</string>
     <string name="setting_vibration_desc">Tactile vibrations on countdown and phase changes</string>
     <string name="setting_screen_awake">Keep Screen Awake</string>

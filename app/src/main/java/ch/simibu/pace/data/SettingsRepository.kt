@@ -1,6 +1,7 @@
 package ch.simibu.pace.data
 
 import android.content.Context
+import ch.simibu.pace.model.SoundScheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +15,26 @@ class SettingsRepository(context: Context) {
 
     private val _soundEnabled = MutableStateFlow(prefs.getBoolean(KEY_SOUND_ENABLED, true))
     val soundEnabled: StateFlow<Boolean> = _soundEnabled.asStateFlow()
+
+    private val _focusSoundScheme = MutableStateFlow(
+        SoundScheme.fromId(prefs.getString(KEY_FOCUS_SOUND, SoundScheme.BELL.id))
+    )
+    val focusSoundScheme: StateFlow<SoundScheme> = _focusSoundScheme.asStateFlow()
+
+    private val _focusSoundRepeats = MutableStateFlow(
+        prefs.getInt(KEY_FOCUS_SOUND_REPEATS, 1).coerceIn(1, 5)
+    )
+    val focusSoundRepeats: StateFlow<Int> = _focusSoundRepeats.asStateFlow()
+
+    private val _breakSoundScheme = MutableStateFlow(
+        SoundScheme.fromId(prefs.getString(KEY_BREAK_SOUND, SoundScheme.CHIME.id))
+    )
+    val breakSoundScheme: StateFlow<SoundScheme> = _breakSoundScheme.asStateFlow()
+
+    private val _breakSoundRepeats = MutableStateFlow(
+        prefs.getInt(KEY_BREAK_SOUND_REPEATS, 1).coerceIn(1, 5)
+    )
+    val breakSoundRepeats: StateFlow<Int> = _breakSoundRepeats.asStateFlow()
 
     private val _vibrationEnabled = MutableStateFlow(prefs.getBoolean(KEY_VIBRATION_ENABLED, true))
     val vibrationEnabled: StateFlow<Boolean> = _vibrationEnabled.asStateFlow()
@@ -69,6 +90,28 @@ class SettingsRepository(context: Context) {
         _soundEnabled.value = enabled
     }
 
+    fun setFocusSoundScheme(scheme: SoundScheme) {
+        prefs.edit().putString(KEY_FOCUS_SOUND, scheme.id).apply()
+        _focusSoundScheme.value = scheme
+    }
+
+    fun setFocusSoundRepeats(repeats: Int) {
+        val clamped = repeats.coerceIn(1, 5)
+        prefs.edit().putInt(KEY_FOCUS_SOUND_REPEATS, clamped).apply()
+        _focusSoundRepeats.value = clamped
+    }
+
+    fun setBreakSoundScheme(scheme: SoundScheme) {
+        prefs.edit().putString(KEY_BREAK_SOUND, scheme.id).apply()
+        _breakSoundScheme.value = scheme
+    }
+
+    fun setBreakSoundRepeats(repeats: Int) {
+        val clamped = repeats.coerceIn(1, 5)
+        prefs.edit().putInt(KEY_BREAK_SOUND_REPEATS, clamped).apply()
+        _breakSoundRepeats.value = clamped
+    }
+
     fun setVibrationEnabled(enabled: Boolean) {
         prefs.edit().putBoolean(KEY_VIBRATION_ENABLED, enabled).apply()
         _vibrationEnabled.value = enabled
@@ -87,6 +130,10 @@ class SettingsRepository(context: Context) {
 
         private const val KEY_THEME_MODE = "theme_mode"
         private const val KEY_SOUND_ENABLED = "sound_enabled"
+        private const val KEY_FOCUS_SOUND = "focus_sound"
+        private const val KEY_FOCUS_SOUND_REPEATS = "focus_sound_repeats"
+        private const val KEY_BREAK_SOUND = "break_sound"
+        private const val KEY_BREAK_SOUND_REPEATS = "break_sound_repeats"
         private const val KEY_VIBRATION_ENABLED = "vibration_enabled"
         private const val KEY_SCREEN_AWAKE = "screen_awake"
 

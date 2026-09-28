@@ -21,7 +21,12 @@ import kotlinx.coroutines.launch
 
 sealed class TimerEvent {
     data class CountdownTick(val secondsLeft: Int) : TimerEvent()
-    data class PhaseTransition(val newPhase: TimerPhase, val round: Int, val scheme: SoundScheme) : TimerEvent()
+    data class PhaseTransition(
+        val newPhase: TimerPhase,
+        val round: Int,
+        val scheme: SoundScheme,
+        val repeats: Int = 1
+    ) : TimerEvent()
     object Completed : TimerEvent()
 }
 
@@ -43,18 +48,30 @@ class TimerEngine(
     private var focusSeconds: Int = 45
     private var breakSeconds: Int = 15
     private var totalRounds: Int = 8
-    private var currentSoundScheme: SoundScheme = SoundScheme.BEEP
+    private var currentFocusSoundScheme: SoundScheme = SoundScheme.BELL
+    private var currentFocusSoundRepeats: Int = 1
+    private var currentBreakSoundScheme: SoundScheme = SoundScheme.CHIME
+    private var currentBreakSoundRepeats: Int = 1
     private var currentColorScheme: ColorSchemeOption = ColorSchemeOption.PACE
     private var sessionTitle: String = ""
 
-    fun startRoutine(routine: Routine) {
+    fun startRoutine(
+        routine: Routine,
+        focusSound: SoundScheme = routine.soundScheme,
+        focusRepeats: Int = 1,
+        breakSound: SoundScheme = routine.soundScheme,
+        breakRepeats: Int = 1
+    ) {
         startSession(
             title = routine.name,
             focus = routine.totalFocusSeconds,
             rest = routine.totalBreakSeconds,
             rounds = routine.iterations,
             warmup = routine.warmupSeconds,
-            sound = routine.soundScheme,
+            focusSound = focusSound,
+            focusRepeats = focusRepeats,
+            breakSound = breakSound,
+            breakRepeats = breakRepeats,
             color = routine.colorScheme
         )
     }
@@ -64,7 +81,10 @@ class TimerEngine(
         breakSec: Int,
         rounds: Int,
         warmupSec: Int = 0,
-        sound: SoundScheme = SoundScheme.BEEP,
+        focusSound: SoundScheme = SoundScheme.BELL,
+        focusRepeats: Int = 1,
+        breakSound: SoundScheme = SoundScheme.CHIME,
+        breakRepeats: Int = 1,
         color: ColorSchemeOption = ColorSchemeOption.PACE
     ) {
         startSession(
@@ -73,7 +93,10 @@ class TimerEngine(
             rest = breakSec,
             rounds = rounds,
             warmup = warmupSec,
-            sound = sound,
+            focusSound = focusSound,
+            focusRepeats = focusRepeats,
+            breakSound = breakSound,
+            breakRepeats = breakRepeats,
             color = color
         )
     }
@@ -84,7 +107,10 @@ class TimerEngine(
         rest: Int,
         rounds: Int,
         warmup: Int,
-        sound: SoundScheme,
+        focusSound: SoundScheme,
+        focusRepeats: Int = 1,
+        breakSound: SoundScheme,
+        breakRepeats: Int = 1,
         color: ColorSchemeOption
     ) {
         tickerJob?.cancel()
@@ -94,11 +120,16 @@ class TimerEngine(
         breakSeconds = rest.coerceAtLeast(1)
         totalRounds = rounds.coerceAtLeast(1)
         warmupSeconds = warmup.coerceAtLeast(0)
-        currentSoundScheme = sound
+        currentFocusSoundScheme = focusSound
+        currentFocusSoundRepeats = focusRepeats.coerceIn(1, 5)
+        currentBreakSoundScheme = breakSound
+        currentBreakSoundRepeats = breakRepeats.coerceIn(1, 5)
         currentColorScheme = color
 
         val initialPhase = if (warmupSeconds > 0) TimerPhase.WARMUP else TimerPhase.FOCUS
         val initialDuration = if (warmupSeconds > 0) warmupSeconds else focusSeconds
+        val initialSound = if (warmupSeconds > 0) currentFocusSoundScheme else currentFocusSoundScheme
+        val initialRepeats = if (warmupSeconds > 0) 1 else currentFocusSoundRepeats
 
         _state.value = TimerState(
             phase = initialPhase,
@@ -110,11 +141,11 @@ class TimerEngine(
             isPaused = false,
             isCompleted = false,
             routineName = sessionTitle,
-            soundScheme = currentSoundScheme,
+            soundScheme = currentFocusSoundScheme,
             colorScheme = currentColorScheme
         )
 
-        _events.tryEmit(TimerEvent.PhaseTransition(initialPhase, 1, currentSoundScheme))
+        _events.tryEmit(TimerEvent.PhaseTransition(initialPhase, 1, initialSound, initialRepeats))
         startTicker()
     }
 
@@ -188,7 +219,10 @@ class TimerEngine(
             rest = breakSeconds,
             rounds = totalRounds,
             warmup = warmupSeconds,
-            sound = currentSoundScheme,
+            focusSound = currentFocusSoundScheme,
+            focusRepeats = currentFocusSoundRepeats,
+            breakSound = currentBreakSoundScheme,
+            breakRepeats = currentBreakSoundRepeats,
             color = currentColorScheme
         )
     }
@@ -206,7 +240,7 @@ class TimerEngine(
                     totalSecondsInPhase = focusSeconds
                 )
                 _state.value = newState
-                _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.FOCUS, 1, currentSoundScheme))
+                _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.FOCUS, 1, currentFocusSoundScheme, currentFocusSoundRepeats))
             }
             TimerPhase.FOCUS -> {
                 if (current.currentRound >= current.totalRounds) {
@@ -220,7 +254,7 @@ class TimerEngine(
                         totalSecondsInPhase = breakSeconds
                     )
                     _state.value = newState
-                    _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.BREAK, current.currentRound, currentSoundScheme))
+                    _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.BREAK, current.currentRound, currentBreakSoundScheme, currentBreakSoundRepeats))
                 }
             }
             TimerPhase.BREAK -> {
@@ -233,7 +267,7 @@ class TimerEngine(
                     totalSecondsInPhase = focusSeconds
                 )
                 _state.value = newState
-                _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.FOCUS, nextRound, currentSoundScheme))
+                _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.FOCUS, nextRound, currentFocusSoundScheme, currentFocusSoundRepeats))
             }
             TimerPhase.COMPLETED -> {
                 // Already completed

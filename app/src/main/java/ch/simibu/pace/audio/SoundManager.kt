@@ -4,18 +4,24 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.Build
-import android.os.CombinedVibration
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import ch.simibu.pace.R
 import ch.simibu.pace.model.SoundScheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SoundManager(private val context: Context) {
 
     private val soundPool: SoundPool
     private val soundMap = mutableMapOf<Int, Int>()
     private var isLoaded = false
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 
     private val vibrator: Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
         val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? VibratorManager
@@ -32,7 +38,7 @@ class SoundManager(private val context: Context) {
             .build()
 
         soundPool = SoundPool.Builder()
-            .setMaxStreams(4)
+            .setMaxStreams(6)
             .setAudioAttributes(attributes)
             .build()
 
@@ -57,10 +63,29 @@ class SoundManager(private val context: Context) {
         isLoaded = true
     }
 
-    fun playSchemeSound(scheme: SoundScheme, volume: Float = 1.0f) {
+    fun playSchemeSound(scheme: SoundScheme, repeats: Int = 1, volume: Float = 1.0f) {
         val rawResId = scheme.rawResId ?: return
         val soundId = soundMap[rawResId] ?: return
-        soundPool.play(soundId, volume, volume, 1, 0, 1.0f)
+        val clampedRepeats = repeats.coerceIn(1, 5)
+
+        if (clampedRepeats == 1) {
+            soundPool.play(soundId, volume, volume, 1, 0, 1.0f)
+        } else {
+            val interval = when (scheme) {
+                SoundScheme.BEEP, SoundScheme.PULSE -> 220L
+                SoundScheme.BELL, SoundScheme.CHIME -> 450L
+                SoundScheme.BOWL, SoundScheme.GONG -> 650L
+                else -> 300L
+            }
+            scope.launch {
+                repeat(clampedRepeats) { i ->
+                    soundPool.play(soundId, volume, volume, 1, 0, 1.0f)
+                    if (i < clampedRepeats - 1) {
+                        delay(interval)
+                    }
+                }
+            }
+        }
     }
 
     fun playCountdownTick(volume: Float = 0.8f) {
@@ -98,6 +123,7 @@ class SoundManager(private val context: Context) {
     }
 
     fun release() {
+        scope.cancel()
         soundPool.release()
     }
 }
