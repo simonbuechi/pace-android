@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="ch.simibu.pace.TimerEngineTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2026-09-28T15:24:57.805Z" hostname="DESKTOP-3VMAK5N" time="0.099">
+  <properties/>
+  <testcase name="testRoutineDurationCalculation" classname="ch.simibu.pace.TimerEngineTest" time="0.04"/>
+  <testcase name="testSkipPhase" classname="ch.simibu.pace.TimerEngineTest" time="0.052"/>
+  <testcase name="testQuickTimerInitialization" classname="ch.simibu.pace.TimerEngineTest" time="0.001"/>
+  <testcase name="testWarmupPhaseTransition" classname="ch.simibu.pace.TimerEngineTest" time="0.0"/>
+  <testcase name="testFocusToBreakAndNextRound" classname="ch.simibu.pace.TimerEngineTest" time="0.004"/>
+  <testcase name="testPauseResume" classname="ch.simibu.pace.TimerEngineTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,34 @@
+[
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/raw_zen_gong.wav.flat",
+        "source": "ch.simibu.pace.app-main-56:/raw/zen_gong.wav"
+    },
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/raw_digital_pulse.wav.flat",
+        "source": "ch.simibu.pace.app-main-56:/raw/digital_pulse.wav"
+    },
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/raw_temple_bell.wav.flat",
+        "source": "ch.simibu.pace.app-main-56:/raw/temple_bell.wav"
+    },
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/raw_beep.wav.flat",
+        "source": "ch.simibu.pace.app-main-56:/raw/beep.wav"
+    },
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/raw_gentle_chime.wav.flat",
+        "source": "ch.simibu.pace.app-main-56:/raw/gentle_chime.wav"
+    },
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/drawable_logo.webp.flat",
+        "source": "ch.simibu.pace.app-main-56:/drawable/logo.webp"
+    },
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/raw_marimba_pop.wav.flat",
+        "source": "ch.simibu.pace.app-main-56:/raw/marimba_pop.wav"
+    },
+    {
+        "merged": "ch.simibu.pace.app-debug-54:/raw_singing_bowl.wav.flat",
+        "source": "ch.simibu.pace.app-main-56:/raw/singing_bowl.wav"
+    }
+]

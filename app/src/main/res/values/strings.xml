@@ -1,0 +1,95 @@
+<resources>
+    <string name="app_name">Pace Amigo</string>
+    <string name="app_short_name">Pace</string>
+
+    <!-- Navigation -->
+    <string name="nav_quick_start">Quick Start</string>
+    <string name="nav_routines">Routines</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Quick Start Screen -->
+    <string name="quick_start_title">Quick Starter</string>
+    <string name="quick_start_subtitle">Set your intervals and get moving</string>
+    <string name="focus_duration">Focus Time</string>
+    <string name="break_duration">Break Time</string>
+    <string name="iterations">Sets / Rounds</string>
+    <string name="rounds_count">%d Rounds</string>
+    <string name="warmup_time">Warm-up: %d sec</string>
+    <string name="warmup_toggle">Preparation countdown (10s)</string>
+    <string name="start_timer">Start Session</string>
+    <string name="save_as_routine">Save as Routine</string>
+    <string name="minutes">min</string>
+    <string name="seconds">sec</string>
+
+    <!-- Timer Screen -->
+    <string name="timer_phase_warmup">Warm-up</string>
+    <string name="timer_phase_focus">Focus</string>
+    <string name="timer_phase_break">Break</string>
+    <string name="timer_phase_complete">Completed!</string>
+    <string name="round_indicator">Round %1$d of %2$d</string>
+    <string name="time_remaining">Remaining</string>
+    <string name="btn_pause">Pause</string>
+    <string name="btn_resume">Resume</string>
+    <string name="btn_skip">Skip Phase</string>
+    <string name="btn_stop">Stop</string>
+    <string name="btn_restart">Restart</string>
+    <string name="exit_timer_title">Exit Workout?</string>
+    <string name="exit_timer_message">Are you sure you want to stop this active session?</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_confirm">Exit</string>
+    <string name="session_finished_title">Great Job!</string>
+    <string name="session_finished_msg">You completed %d rounds!</string>
+
+    <!-- Routines Screen -->
+    <string name="routines_title">Saved Routines</string>
+    <string name="routine_new">New Routine</string>
+    <string name="routine_edit">Edit Routine</string>
+    <string name="routine_name_label">Routine Name</string>
+    <string name="routine_name_hint">e.g., Tabata HIIT, Pomodoro</string>
+    <string name="routine_category_label">Category</string>
+    <string name="routine_delete_confirm">Delete routine "%s"?</string>
+    <string name="routine_saved">Routine saved</string>
+    <string name="routine_deleted">Routine deleted</string>
+    <string name="btn_save">Save</string>
+    <string name="btn_delete">Delete</string>
+    <string name="no_routines">No routines yet. Create your first one!</string>
+
+    <!-- Sounds & Themes -->
+    <string name="sound_scheme_label">Sound Cue</string>
+    <string name="sound_beep">Digital Beep</string>
+    <string name="sound_bell">Temple Bell</string>
+    <string name="sound_pulse">Digital Pulse</string>
+    <string name="sound_bowl">Singing Bowl</string>
+    <string name="sound_chime">Gentle Chime</string>
+    <string name="sound_gong">Zen Gong</string>
+    <string name="sound_none">Mute</string>
+    <string name="color_scheme_label">Theme Accent</string>
+    <string name="color_coral">Coral Fire</string>
+    <string name="color_emerald">Emerald Flow</string>
+    <string name="color_violet">Electric Violet</string>
+    <string name="color_amber">Sunset Amber</string>
+    <string name="color_ocean">Ocean Blue</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_title">Settings</string>
+    <string name="setting_theme_mode">Appearance</string>
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="setting_sound_volume">Sound Volume</string>
+    <string name="setting_sound_desc">Audio cues on round and countdown transitions</string>
+    <string name="setting_vibration">Vibration &amp; Haptics</string>
+    <string name="setting_vibration_desc">Tactile vibrations on countdown and phase changes</string>
+    <string name="setting_screen_awake">Keep Screen Awake</string>
+    <string name="setting_screen_awake_desc">Prevent display from sleeping while timer runs</string>
+    <string name="setting_language">Language</string>
+    <string name="setting_language_desc">English &amp; Deutsch (follows system language)</string>
+
+    <!-- Notification & Background Service -->
+    <string name="notification_channel_name">Pace Timer Status</string>
+    <string name="notification_channel_desc">Shows ongoing interval countdown and playback controls</string>
+    <string name="notification_action_pause">Pause</string>
+    <string name="notification_action_resume">Resume</string>
+    <string name="notification_action_skip">Skip</string>
+    <string name="notification_action_stop">Stop</string>
+</resources>
