@@ -103,7 +103,7 @@
     <string name="setting_screen_awake">Keep Screen Awake</string>
     <string name="setting_screen_awake_desc">Prevent display from sleeping while timer runs</string>
     <string name="setting_language">Language</string>
-    <string name="setting_language_desc">English &amp; Deutsch (follows system language)</string>
+    <string name="setting_language_desc">Follows system language (20 European languages supported)</string>
 
     <!-- Notification & Background Service -->
     <string name="notification_channel_name">Pace Timer Status</string>

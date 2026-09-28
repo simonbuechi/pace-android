@@ -15,29 +15,29 @@
   - Set custom **Focus duration** (minutes & seconds via tactile wheel pickers).
   - Set custom **Break duration** (minutes & seconds).
   - Select custom **Rounds / Iterations** with dedicated `+` / `-` steppers.
-  - Optional 10-second preparation countdown (warm-up).
-  - Direct 1-tap **"Save as Routine"** shortcut.
+  - Immediate 1-tap **"Start Session"** with signature brand gradient.
 - **🖥️ Fullscreen Timer with Maximal Font Size**:
-  - **Portrait Mode**: Dynamic circular timer ring (`CircularTimerRing`) scaling up to `350dp` with prominent `90sp`–`100sp` tabular digits.
-  - **Landscape & Widescreen Mode**: Panoramic dashboard with giant digits (`135sp`–`160sp`) readable from 20+ meters across an entire gym room, complemented by a smooth horizontal tactile progress bar.
-  - Non-wobbling tabular numbers (`fontFeatureSettings = "tnum"`) prevent jitter during rapid countdowns.
+  - **Auto-Sizing Typography**: Digits scale dynamically to fill the entire screen (`140sp`–`170sp+`) without clipping, legible from across a large room.
+  - **Background Countdown Circle**: The tactile countdown ring renders smoothly in the background behind the digits, freeing up the full screen.
+  - **Distraction-Free Auto-Hide Controls**: All controls hide while the timer runs and smoothly fade in upon tapping the screen.
+  - Full landscape / widescreen optimization.
 - **🔔 Background Foreground Service**:
   - Seamless background execution via [`PaceTimerService`](file:///d:/dev/antigravity/pace-android/app/src/main/java/ch/simibu/pace/service/PaceTimerService.kt).
   - Ongoing interactive notification with live countdown and media-style action buttons (**Pause/Resume**, **Skip Phase**, **Stop**).
   - Android 14+ (`API 34`) compatible foreground service type (`specialUse`).
 - **📋 Routine Library & Custom Presets**:
   - Pre-seeded presets out of the box: **Tabata HIIT**, **Classic Pomodoro**, **Boxing Rounds**, and **Mobility & Stretch**.
-  - Create, customize, edit, and delete personal routines with custom sound schemes and color palettes.
+  - Create, customize, edit, and delete personal routines with custom sound schemes, color palettes, and optional Warm-up and Cool-down phases.
 - **🎨 Brand Identity & Soft Tactile Design**:
   - Signature brand gradient: **Pace Magenta (`#9123A6`)** to **Pace Raspberry (`#D7195F`)**.
   - Soft tactile / neumorphic surfaces ([`TactileCard`](file:///d:/dev/antigravity/pace-android/app/src/main/java/ch/simibu/pace/ui/components/TactileSurface.kt), [`TactileSunkenWell`](file:///d:/dev/antigravity/pace-android/app/src/main/java/ch/simibu/pace/ui/components/TactileSurface.kt), [`TactilePillButton`](file:///d:/dev/antigravity/pace-android/app/src/main/java/ch/simibu/pace/ui/components/TactileSurface.kt)).
   - Full **Light Theme** (`#F4F1F7`) and **Dark Theme** (`#16141B`) support with automatic luminance-based adaptation.
 - **🔊 Low-Latency Audio & Haptic Feedback**:
   - Native `SoundPool` engine with bundled high-quality sound cues: `Beep`, `Temple Bell`, `Gentle Chime`, `Marimba Pop`, `Singing Bowl`, `Zen Gong`, and `Digital Pulse`.
-  - Configurable countdown ticks (3-2-1 acoustic warning) and distinct phase transition alerts.
+  - Independent focus and break sound selection with configurable repeats (1–5x).
   - Independent audio and haptic toggles in settings.
-- **🌐 Bilingual Localization**:
-  - First-class English (`values/strings.xml`) and German (`values-de/strings.xml`) translations.
+- **🌐 20 European Languages Supported**:
+  - Full native localization for English, German, French, Spanish, Italian, Portuguese, Dutch, Polish, Ukrainian, Russian, Turkish, Swedish, Czech, Greek, Romanian, Hungarian, Danish, Finnish, Norwegian Bokmål, and Croatian.
   - Automatically adheres to device language preferences.
 - **💡 Screen Awake Management**:
   - Optional toggle to keep the screen active during active workouts.

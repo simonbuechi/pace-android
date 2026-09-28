@@ -103,7 +103,7 @@
     <string name="setting_screen_awake">Bildschirm aktiv halten</string>
     <string name="setting_screen_awake_desc">Verhindert den Ruhezustand des Bildschirms während des Trainings</string>
     <string name="setting_language">Sprache</string>
-    <string name="setting_language_desc">Englisch &amp; Deutsch (folgt der Gerätesprache)</string>
+    <string name="setting_language_desc">Folgt der Gerätesprache (20 europäische Sprachen unterstützt)</string>
 
     <!-- Notification & Background Service -->
     <string name="notification_channel_name">Pace Timer Status</string>
