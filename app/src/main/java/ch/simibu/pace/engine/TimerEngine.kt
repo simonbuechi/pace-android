@@ -47,6 +47,7 @@ class TimerEngine(
     private var warmupSeconds: Int = 0
     private var focusSeconds: Int = 45
     private var breakSeconds: Int = 15
+    private var cooldownSeconds: Int = 0
     private var totalRounds: Int = 8
     private var currentFocusSoundScheme: SoundScheme = SoundScheme.BELL
     private var currentFocusSoundRepeats: Int = 1
@@ -67,7 +68,8 @@ class TimerEngine(
             focus = routine.totalFocusSeconds,
             rest = routine.totalBreakSeconds,
             rounds = routine.iterations,
-            warmup = routine.warmupSeconds,
+            warmup = routine.totalWarmupSeconds,
+            cooldown = routine.totalCooldownSeconds,
             focusSound = focusSound,
             focusRepeats = focusRepeats,
             breakSound = breakSound,
@@ -81,6 +83,7 @@ class TimerEngine(
         breakSec: Int,
         rounds: Int,
         warmupSec: Int = 0,
+        cooldownSec: Int = 0,
         focusSound: SoundScheme = SoundScheme.BELL,
         focusRepeats: Int = 1,
         breakSound: SoundScheme = SoundScheme.CHIME,
@@ -93,6 +96,7 @@ class TimerEngine(
             rest = breakSec,
             rounds = rounds,
             warmup = warmupSec,
+            cooldown = cooldownSec,
             focusSound = focusSound,
             focusRepeats = focusRepeats,
             breakSound = breakSound,
@@ -107,6 +111,7 @@ class TimerEngine(
         rest: Int,
         rounds: Int,
         warmup: Int,
+        cooldown: Int = 0,
         focusSound: SoundScheme,
         focusRepeats: Int = 1,
         breakSound: SoundScheme,
@@ -120,6 +125,7 @@ class TimerEngine(
         breakSeconds = rest.coerceAtLeast(1)
         totalRounds = rounds.coerceAtLeast(1)
         warmupSeconds = warmup.coerceAtLeast(0)
+        cooldownSeconds = cooldown.coerceAtLeast(0)
         currentFocusSoundScheme = focusSound
         currentFocusSoundRepeats = focusRepeats.coerceIn(1, 5)
         currentBreakSoundScheme = breakSound
@@ -128,7 +134,7 @@ class TimerEngine(
 
         val initialPhase = if (warmupSeconds > 0) TimerPhase.WARMUP else TimerPhase.FOCUS
         val initialDuration = if (warmupSeconds > 0) warmupSeconds else focusSeconds
-        val initialSound = if (warmupSeconds > 0) currentFocusSoundScheme else currentFocusSoundScheme
+        val initialSound = currentFocusSoundScheme
         val initialRepeats = if (warmupSeconds > 0) 1 else currentFocusSoundRepeats
 
         _state.value = TimerState(
@@ -219,6 +225,7 @@ class TimerEngine(
             rest = breakSeconds,
             rounds = totalRounds,
             warmup = warmupSeconds,
+            cooldown = cooldownSeconds,
             focusSound = currentFocusSoundScheme,
             focusRepeats = currentFocusSoundRepeats,
             breakSound = currentBreakSoundScheme,
@@ -244,8 +251,19 @@ class TimerEngine(
             }
             TimerPhase.FOCUS -> {
                 if (current.currentRound >= current.totalRounds) {
-                    // All rounds complete
-                    finishSession()
+                    if (cooldownSeconds > 0) {
+                        // Transition Focus -> Cool-down
+                        val newState = current.copy(
+                            phase = TimerPhase.COOLDOWN,
+                            remainingSecondsInPhase = cooldownSeconds,
+                            totalSecondsInPhase = cooldownSeconds
+                        )
+                        _state.value = newState
+                        _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.COOLDOWN, current.totalRounds, currentBreakSoundScheme, currentBreakSoundRepeats))
+                    } else {
+                        // All rounds complete
+                        finishSession()
+                    }
                 } else {
                     // Transition Focus -> Break
                     val newState = current.copy(
@@ -268,6 +286,9 @@ class TimerEngine(
                 )
                 _state.value = newState
                 _events.tryEmit(TimerEvent.PhaseTransition(TimerPhase.FOCUS, nextRound, currentFocusSoundScheme, currentFocusSoundRepeats))
+            }
+            TimerPhase.COOLDOWN -> {
+                finishSession()
             }
             TimerPhase.COMPLETED -> {
                 // Already completed

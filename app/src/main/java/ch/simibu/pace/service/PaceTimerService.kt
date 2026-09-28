@@ -134,6 +134,7 @@ class PaceTimerService : Service() {
             TimerPhase.WARMUP -> getString(R.string.timer_phase_warmup)
             TimerPhase.FOCUS -> getString(R.string.timer_phase_focus)
             TimerPhase.BREAK -> getString(R.string.timer_phase_break)
+            TimerPhase.COOLDOWN -> getString(R.string.timer_phase_cooldown)
             TimerPhase.COMPLETED -> getString(R.string.timer_phase_complete)
         }
 

@@ -37,4 +37,5 @@ val PaceLightOnSurfaceVariant = Color(0xFF5D5466)
 val PhaseWarmupColor = Color(0xFFFFA000)
 val PhaseFocusColor = PaceRaspberry
 val PhaseBreakColor = Color(0xFF00BFA5)
+val PhaseCooldownColor = Color(0xFF00ACC1)
 val PhaseCompletedColor = PaceMagenta

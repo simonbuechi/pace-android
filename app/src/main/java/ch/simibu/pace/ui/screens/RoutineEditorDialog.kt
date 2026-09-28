@@ -1,5 +1,10 @@
 package ch.simibu.pace.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -28,7 +33,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -70,13 +74,32 @@ fun RoutineEditorDialog(
     onSave: (Routine) -> Unit
 ) {
     var name by remember { mutableStateOf(initialRoutine?.name ?: "") }
-    var category by remember { mutableStateOf(initialRoutine?.category ?: "Workout") }
     var focusMin by remember { mutableIntStateOf(initialRoutine?.focusMinutes ?: defaultFocusMin) }
     var focusSec by remember { mutableIntStateOf(initialRoutine?.focusSeconds ?: defaultFocusSec) }
     var breakMin by remember { mutableIntStateOf(initialRoutine?.breakMinutes ?: defaultBreakMin) }
     var breakSec by remember { mutableIntStateOf(initialRoutine?.breakSeconds ?: defaultBreakSec) }
     var iterations by remember { mutableIntStateOf(initialRoutine?.iterations ?: defaultRounds) }
-    var warmupEnabled by remember { mutableStateOf((initialRoutine?.warmupSeconds ?: defaultWarmupSec) > 0) }
+
+    // Warm-up configuration
+    val initialWarmupTotal = initialRoutine?.totalWarmupSeconds ?: defaultWarmupSec
+    var warmupEnabled by remember { mutableStateOf(initialWarmupTotal > 0) }
+    var warmupMin by remember {
+        mutableIntStateOf(if (initialWarmupTotal > 0) initialWarmupTotal / 60 else 0)
+    }
+    var warmupSec by remember {
+        mutableIntStateOf(if (initialWarmupTotal > 0) initialWarmupTotal % 60 else 10)
+    }
+
+    // Cool-down configuration
+    val initialCooldownTotal = initialRoutine?.totalCooldownSeconds ?: 0
+    var cooldownEnabled by remember { mutableStateOf(initialCooldownTotal > 0) }
+    var cooldownMin by remember {
+        mutableIntStateOf(if (initialCooldownTotal > 0) initialCooldownTotal / 60 else 1)
+    }
+    var cooldownSec by remember {
+        mutableIntStateOf(if (initialCooldownTotal > 0) initialCooldownTotal % 60 else 0)
+    }
+
     var selectedSound by remember { mutableStateOf(initialRoutine?.soundScheme ?: SoundScheme.BEEP) }
     var selectedColor by remember { mutableStateOf(initialRoutine?.colorScheme ?: ColorSchemeOption.PACE) }
 
@@ -110,21 +133,7 @@ fun RoutineEditorDialog(
                     singleLine = true
                 )
 
-                // Category Chips
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    listOf("Workout", "HIIT", "Pomodoro", "Recovery").forEach { cat ->
-                        FilterChip(
-                            selected = category == cat,
-                            onClick = { category = cat },
-                            label = { Text(cat) }
-                        )
-                    }
-                }
-
-                // Time Pickers
+                // Time Pickers (Focus & Break)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -187,17 +196,102 @@ fun RoutineEditorDialog(
                     }
                 }
 
-                // Warmup Toggle
-                Row(
+                // Warm-up / Preparation
+                Column(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text(stringResource(R.string.warmup_toggle))
-                    Switch(
-                        checked = warmupEnabled,
-                        onCheckedChange = { warmupEnabled = it }
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.routine_warmup_label),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = stringResource(R.string.routine_warmup_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = warmupEnabled,
+                            onCheckedChange = {
+                                warmupEnabled = it
+                                if (it && warmupMin == 0 && warmupSec == 0) {
+                                    warmupSec = 10
+                                }
+                            }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = warmupEnabled,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        TimeDurationWheelPicker(
+                            modifier = Modifier.fillMaxWidth(),
+                            minutes = warmupMin,
+                            seconds = warmupSec,
+                            onMinutesChanged = { warmupMin = it },
+                            onSecondsChanged = { warmupSec = it },
+                            title = stringResource(R.string.routine_warmup_duration)
+                        )
+                    }
+                }
+
+                // Cool-down
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.routine_cooldown_label),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = stringResource(R.string.routine_cooldown_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = cooldownEnabled,
+                            onCheckedChange = {
+                                cooldownEnabled = it
+                                if (it && cooldownMin == 0 && cooldownSec == 0) {
+                                    cooldownMin = 1
+                                }
+                            }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = cooldownEnabled,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        TimeDurationWheelPicker(
+                            modifier = Modifier.fillMaxWidth(),
+                            minutes = cooldownMin,
+                            seconds = cooldownSec,
+                            onMinutesChanged = { cooldownMin = it },
+                            onSecondsChanged = { cooldownSec = it },
+                            title = stringResource(R.string.routine_cooldown_duration)
+                        )
+                    }
                 }
 
                 // Sound Scheme Dropdown
@@ -280,13 +374,15 @@ fun RoutineEditorDialog(
                     val routine = Routine(
                         id = initialRoutine?.id ?: UUID.randomUUID().toString(),
                         name = finalName,
-                        category = category,
                         focusMinutes = focusMin,
                         focusSeconds = focusSec,
                         breakMinutes = breakMin,
                         breakSeconds = breakSec,
                         iterations = iterations,
-                        warmupSeconds = if (warmupEnabled) 10 else 0,
+                        warmupMinutes = if (warmupEnabled) warmupMin else 0,
+                        warmupSeconds = if (warmupEnabled) warmupSec else 0,
+                        cooldownMinutes = if (cooldownEnabled) cooldownMin else 0,
+                        cooldownSeconds = if (cooldownEnabled) cooldownSec else 0,
                         soundSchemeId = selectedSound.id,
                         colorSchemeId = selectedColor.id
                     )

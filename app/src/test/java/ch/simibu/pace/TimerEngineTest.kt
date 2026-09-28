@@ -110,6 +110,26 @@ class TimerEngineTest {
     }
 
     @Test
+    fun testCooldownPhaseTransition() {
+        val engine = TimerEngine()
+        engine.startQuickTimer(focusSec = 5, breakSec = 2, rounds = 1, warmupSec = 0, cooldownSec = 8)
+
+        assertEquals(TimerPhase.FOCUS, engine.state.value.phase)
+
+        // 5 ticks: round 1 focus finishes -> transitions to COOLDOWN (not directly completed)
+        repeat(5) { engine.performTick() }
+        assertEquals(TimerPhase.COOLDOWN, engine.state.value.phase)
+        assertEquals(8, engine.state.value.remainingSecondsInPhase)
+        assertTrue(engine.state.value.isRunning)
+
+        // 8 ticks: cooldown finishes -> COMPLETED
+        repeat(8) { engine.performTick() }
+        assertEquals(TimerPhase.COMPLETED, engine.state.value.phase)
+        assertTrue(engine.state.value.isCompleted)
+        assertFalse(engine.state.value.isRunning)
+    }
+
+    @Test
     fun testRoutineDurationCalculation() {
         val routine = Routine(
             id = "test",
@@ -119,11 +139,16 @@ class TimerEngineTest {
             breakMinutes = 0,
             breakSeconds = 30, // 30s
             iterations = 4,    // 4 rounds * 120s = 480s
-            warmupSeconds = 10 // + 10s = 490s
+            warmupMinutes = 0,
+            warmupSeconds = 10, // + 10s = 490s
+            cooldownMinutes = 1,
+            cooldownSeconds = 0  // + 60s = 550s
         )
 
         assertEquals(90, routine.totalFocusSeconds)
         assertEquals(30, routine.totalBreakSeconds)
-        assertEquals(490, routine.totalDurationSeconds)
+        assertEquals(10, routine.totalWarmupSeconds)
+        assertEquals(60, routine.totalCooldownSeconds)
+        assertEquals(550, routine.totalDurationSeconds)
     }
 }

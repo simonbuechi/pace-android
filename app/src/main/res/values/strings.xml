@@ -25,6 +25,7 @@
     <string name="timer_phase_warmup">Warm-up</string>
     <string name="timer_phase_focus">Focus</string>
     <string name="timer_phase_break">Break</string>
+    <string name="timer_phase_cooldown">Cool-down</string>
     <string name="timer_phase_complete">Completed!</string>
     <string name="round_indicator">Round %1$d of %2$d</string>
     <string name="time_remaining">Remaining</string>
@@ -46,6 +47,16 @@
     <string name="routine_edit">Edit Routine</string>
     <string name="routine_name_label">Routine Name</string>
     <string name="routine_name_hint">e.g., Tabata HIIT, Pomodoro</string>
+    <string name="routine_warmup_label">Warm-up / Preparation</string>
+    <string name="routine_warmup_desc">Countdown to prepare before round 1 begins</string>
+    <string name="routine_warmup_duration">Warm-up Duration</string>
+    <string name="routine_cooldown_label">Cool-down</string>
+    <string name="routine_cooldown_desc">Recovery phase after final round</string>
+    <string name="routine_cooldown_duration">Cool-down Duration</string>
+    <string name="badge_warmup">Warm: %1$02d:%2$02d</string>
+    <string name="badge_cooldown">Cool: %1$02d:%2$02d</string>
+    <string name="badge_focus">Focus: %1$02d:%2$02d</string>
+    <string name="badge_break">Break: %1$02d:%2$02d</string>
     <string name="routine_category_label">Category</string>
     <string name="routine_delete_confirm">Delete routine "%s"?</string>
     <string name="routine_saved">Routine saved</string>

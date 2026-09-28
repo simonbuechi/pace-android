@@ -35,6 +35,7 @@ import ch.simibu.pace.ui.theme.PaceMagenta
 import ch.simibu.pace.ui.theme.PaceRaspberry
 import ch.simibu.pace.ui.theme.PhaseBreakColor
 import ch.simibu.pace.ui.theme.PhaseCompletedColor
+import ch.simibu.pace.ui.theme.PhaseCooldownColor
 import ch.simibu.pace.ui.theme.PhaseFocusColor
 import ch.simibu.pace.ui.theme.PhaseWarmupColor
 
@@ -58,6 +59,7 @@ fun CircularTimerRing(
         TimerPhase.WARMUP -> PhaseWarmupColor
         TimerPhase.FOCUS -> accentColor
         TimerPhase.BREAK -> PhaseBreakColor
+        TimerPhase.COOLDOWN -> PhaseCooldownColor
         TimerPhase.COMPLETED -> PhaseCompletedColor
     }
 
@@ -92,6 +94,7 @@ fun CircularTimerRing(
         TimerPhase.WARMUP -> listOf(PhaseWarmupColor, Color(0xFFFFB74D))
         TimerPhase.FOCUS -> listOf(PaceMagenta, PaceRaspberry)
         TimerPhase.BREAK -> listOf(PhaseBreakColor, Color(0xFF64FFDA))
+        TimerPhase.COOLDOWN -> listOf(PhaseCooldownColor, Color(0xFF80DEEA))
         TimerPhase.COMPLETED -> listOf(PaceMagenta, PaceRaspberry)
     }
 

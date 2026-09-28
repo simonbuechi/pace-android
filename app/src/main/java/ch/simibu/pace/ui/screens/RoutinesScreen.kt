@@ -58,11 +58,15 @@ import ch.simibu.pace.R
 import ch.simibu.pace.model.Routine
 import ch.simibu.pace.service.PaceTimerService
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
 import ch.simibu.pace.ui.components.TactileCard
 import ch.simibu.pace.ui.components.TactilePillButton
 import ch.simibu.pace.ui.theme.PaceBrandGradient
 import ch.simibu.pace.ui.theme.PaceMagenta
 import ch.simibu.pace.ui.theme.PaceRaspberry
+import ch.simibu.pace.ui.theme.PhaseCooldownColor
+import ch.simibu.pace.ui.theme.PhaseWarmupColor
 
 @Composable
 fun RoutinesScreen(
@@ -232,19 +236,12 @@ fun RoutineCard(
                             )
                     )
                     Spacer(modifier = Modifier.width(12.dp))
-                    Column {
-                        Text(
-                            text = routine.name,
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
-                        Text(
-                            text = routine.category,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
+                    Text(
+                        text = routine.name,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
                 }
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -265,18 +262,41 @@ fun RoutineCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier
+                        .weight(1f)
+                        .horizontalScroll(rememberScrollState())
+                        .padding(end = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Warm-up badge if set
+                    if (routine.totalWarmupSeconds > 0) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = PhaseWarmupColor.copy(alpha = 0.16f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.badge_warmup, routine.warmupMinutes, routine.warmupSeconds),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = PhaseWarmupColor,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                            )
+                        }
+                    }
+
                     // Focus badge
                     Surface(
                         shape = RoundedCornerShape(10.dp),
                         color = routine.colorScheme.primaryColor.copy(alpha = 0.14f)
                     ) {
                         Text(
-                            text = "Focus: %02d:%02d".format(routine.focusMinutes, routine.focusSeconds),
-                            style = MaterialTheme.typography.labelMedium,
+                            text = stringResource(R.string.badge_focus, routine.focusMinutes, routine.focusSeconds),
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = routine.colorScheme.primaryColor,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
                         )
                     }
 
@@ -286,12 +306,28 @@ fun RoutineCard(
                         color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.14f)
                     ) {
                         Text(
-                            text = "Break: %02d:%02d".format(routine.breakMinutes, routine.breakSeconds),
-                            style = MaterialTheme.typography.labelMedium,
+                            text = stringResource(R.string.badge_break, routine.breakMinutes, routine.breakSeconds),
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
                         )
+                    }
+
+                    // Cool-down badge if set
+                    if (routine.totalCooldownSeconds > 0) {
+                        Surface(
+                            shape = RoundedCornerShape(10.dp),
+                            color = PhaseCooldownColor.copy(alpha = 0.16f)
+                        ) {
+                            Text(
+                                text = stringResource(R.string.badge_cooldown, routine.cooldownMinutes, routine.cooldownSeconds),
+                                style = MaterialTheme.typography.labelSmall,
+                                fontWeight = FontWeight.SemiBold,
+                                color = PhaseCooldownColor,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                            )
+                        }
                     }
 
                     // Rounds badge
@@ -301,9 +337,9 @@ fun RoutineCard(
                     ) {
                         Text(
                             text = "${routine.iterations}x",
-                            style = MaterialTheme.typography.labelMedium,
+                            style = MaterialTheme.typography.labelSmall,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
                         )
                     }
                 }
