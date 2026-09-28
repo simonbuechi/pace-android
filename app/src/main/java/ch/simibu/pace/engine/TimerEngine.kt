@@ -44,7 +44,7 @@ class TimerEngine(
     private var breakSeconds: Int = 15
     private var totalRounds: Int = 8
     private var currentSoundScheme: SoundScheme = SoundScheme.BEEP
-    private var currentColorScheme: ColorSchemeOption = ColorSchemeOption.CORAL
+    private var currentColorScheme: ColorSchemeOption = ColorSchemeOption.PACE
     private var sessionTitle: String = ""
 
     fun startRoutine(routine: Routine) {
@@ -65,7 +65,7 @@ class TimerEngine(
         rounds: Int,
         warmupSec: Int = 0,
         sound: SoundScheme = SoundScheme.BEEP,
-        color: ColorSchemeOption = ColorSchemeOption.CORAL
+        color: ColorSchemeOption = ColorSchemeOption.PACE
     ) {
         startSession(
             title = "Quick Session",

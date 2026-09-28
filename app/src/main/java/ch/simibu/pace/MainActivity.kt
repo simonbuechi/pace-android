@@ -64,7 +64,7 @@ class MainActivity : ComponentActivity() {
             val activeAccent = if (timerState.isRunning || timerState.isCompleted) {
                 timerState.colorScheme
             } else {
-                ColorSchemeOption.CORAL
+                ColorSchemeOption.PACE
             }
 
             PaceAmigoTheme(

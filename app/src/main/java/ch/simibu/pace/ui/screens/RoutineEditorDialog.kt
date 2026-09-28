@@ -78,7 +78,7 @@ fun RoutineEditorDialog(
     var iterations by remember { mutableIntStateOf(initialRoutine?.iterations ?: defaultRounds) }
     var warmupEnabled by remember { mutableStateOf((initialRoutine?.warmupSeconds ?: defaultWarmupSec) > 0) }
     var selectedSound by remember { mutableStateOf(initialRoutine?.soundScheme ?: SoundScheme.BEEP) }
-    var selectedColor by remember { mutableStateOf(initialRoutine?.colorScheme ?: ColorSchemeOption.CORAL) }
+    var selectedColor by remember { mutableStateOf(initialRoutine?.colorScheme ?: ColorSchemeOption.PACE) }
 
     var soundDropdownExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()

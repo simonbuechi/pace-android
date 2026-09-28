@@ -3,7 +3,10 @@ package ch.simibu.pace.ui.screens
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,6 +25,12 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.BookmarkAdd
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.Remove
+import ch.simibu.pace.ui.components.TactileCard
+import ch.simibu.pace.ui.components.TactilePillButton
+import ch.simibu.pace.ui.components.TactileSunkenWell
+import ch.simibu.pace.ui.theme.PaceBrandGradient
+import ch.simibu.pace.ui.theme.PaceMagenta
+import ch.simibu.pace.ui.theme.PaceRaspberry
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -144,62 +153,84 @@ fun QuickStartScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Iterations / Rounds Card
-        Card(
+        // Iterations / Rounds Tactile Card
+        TactileCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
-            )
+            shape = RoundedCornerShape(22.dp),
+            elevation = 6.dp
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(18.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = stringResource(R.string.iterations),
                     style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.SemiBold
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    FilledTonalIconButton(
-                        onClick = {
-                            if (iterations > 1) {
-                                iterations--
-                                updateAndPersist()
-                            }
-                        },
-                        shape = CircleShape
+                    TactileCard(
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clickable {
+                                if (iterations > 1) {
+                                    iterations--
+                                    updateAndPersist()
+                                }
+                            },
+                        shape = CircleShape,
+                        elevation = 4.dp
                     ) {
-                        Icon(Icons.Rounded.Remove, contentDescription = "Decrease rounds")
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Icon(
+                                Icons.Rounded.Remove,
+                                contentDescription = "Decrease rounds",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
 
-                    Text(
-                        text = stringResource(R.string.rounds_count, iterations),
-                        style = MaterialTheme.typography.headlineMedium.copy(fontSize = 26.sp),
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.padding(horizontal = 24.dp)
-                    )
-
-                    FilledTonalIconButton(
-                        onClick = {
-                            if (iterations < 99) {
-                                iterations++
-                                updateAndPersist()
-                            }
-                        },
-                        shape = CircleShape
+                    TactileSunkenWell(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        shape = RoundedCornerShape(14.dp)
                     ) {
-                        Icon(Icons.Rounded.Add, contentDescription = "Increase rounds")
+                        Text(
+                            text = stringResource(R.string.rounds_count, iterations),
+                            style = MaterialTheme.typography.headlineMedium.copy(fontSize = 24.sp),
+                            fontWeight = FontWeight.Black,
+                            color = PaceRaspberry,
+                            modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)
+                        )
+                    }
+
+                    TactileCard(
+                        modifier = Modifier
+                            .size(46.dp)
+                            .clickable {
+                                if (iterations < 99) {
+                                    iterations++
+                                    updateAndPersist()
+                                }
+                            },
+                        shape = CircleShape,
+                        elevation = 4.dp
+                    ) {
+                        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                            Icon(
+                                Icons.Rounded.Add,
+                                contentDescription = "Increase rounds",
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
             }
@@ -207,18 +238,16 @@ fun QuickStartScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Warm-up toggle card
-        Card(
+        // Warm-up toggle tactile card
+        TactileCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
-            )
+            shape = RoundedCornerShape(22.dp),
+            elevation = 4.dp
         ) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
+                    .padding(horizontal = 20.dp, vertical = 14.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -226,7 +255,7 @@ fun QuickStartScreen(
                     Text(
                         text = stringResource(R.string.warmup_toggle),
                         style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Medium
+                        fontWeight = FontWeight.SemiBold
                     )
                     Text(
                         text = stringResource(R.string.warmup_time, 10),
@@ -247,68 +276,93 @@ fun QuickStartScreen(
 
         Spacer(modifier = Modifier.height(28.dp))
 
-        // Big Primary Action: Start Session
-        Button(
-            onClick = {
-                val totalFocus = (focusMinutes * 60) + focusSeconds
-                val totalBreak = (breakMinutes * 60) + breakSeconds
-                val warmup = if (warmupEnabled) 10 else 0
-
-                timerEngine.startQuickTimer(
-                    focusSec = if (totalFocus > 0) totalFocus else 45,
-                    breakSec = if (totalBreak > 0) totalBreak else 15,
-                    rounds = iterations,
-                    warmupSec = warmup,
-                    sound = SoundScheme.BEEP,
-                    color = ColorSchemeOption.CORAL
-                )
-                PaceTimerService.start(context)
-                onStartSession()
-            },
+        // Big Primary Action: Start Session with Tactile Pill Button & Brand Gradient
+        TactilePillButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp),
+                .height(60.dp)
+                .clickable {
+                    val totalFocus = (focusMinutes * 60) + focusSeconds
+                    val totalBreak = (breakMinutes * 60) + breakSeconds
+                    val warmup = if (warmupEnabled) 10 else 0
+
+                    timerEngine.startQuickTimer(
+                        focusSec = if (totalFocus > 0) totalFocus else 45,
+                        breakSec = if (totalBreak > 0) totalBreak else 15,
+                        rounds = iterations,
+                        warmupSec = warmup,
+                        sound = SoundScheme.BEEP,
+                        color = ColorSchemeOption.PACE
+                    )
+                    PaceTimerService.start(context)
+                    onStartSession()
+                },
             shape = RoundedCornerShape(20.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary
-            ),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 6.dp)
+            elevation = 8.dp
         ) {
-            Icon(Icons.Rounded.PlayArrow, contentDescription = null, modifier = Modifier.size(28.dp))
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = stringResource(R.string.start_timer),
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(PaceBrandGradient),
+                contentAlignment = Alignment.Center
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Rounded.PlayArrow,
+                        contentDescription = null,
+                        modifier = Modifier.size(28.dp),
+                        tint = androidx.compose.ui.graphics.Color.White
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = stringResource(R.string.start_timer),
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = androidx.compose.ui.graphics.Color.White
+                    )
+                }
+            }
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(14.dp))
 
-        // Save as Routine Button
-        OutlinedButton(
-            onClick = {
-                onSaveAsRoutineRequested(
-                    focusMinutes,
-                    focusSeconds,
-                    breakMinutes,
-                    breakSeconds,
-                    iterations,
-                    if (warmupEnabled) 10 else 0
-                )
-            },
+        // Save as Routine Tactile Card
+        TactileCard(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp),
-            shape = RoundedCornerShape(16.dp)
+                .height(52.dp)
+                .clickable {
+                    onSaveAsRoutineRequested(
+                        focusMinutes,
+                        focusSeconds,
+                        breakMinutes,
+                        breakSeconds,
+                        iterations,
+                        if (warmupEnabled) 10 else 0
+                    )
+                },
+            shape = RoundedCornerShape(18.dp),
+            elevation = 4.dp
         ) {
-            Icon(Icons.Rounded.BookmarkAdd, contentDescription = null, modifier = Modifier.size(20.dp))
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = stringResource(R.string.save_as_routine),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.SemiBold
-            )
+            Row(
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    Icons.Rounded.BookmarkAdd,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurface
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = stringResource(R.string.save_as_routine),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(24.dp))

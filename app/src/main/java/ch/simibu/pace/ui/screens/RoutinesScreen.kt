@@ -1,6 +1,7 @@
 package ch.simibu.pace.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,6 +58,12 @@ import ch.simibu.pace.R
 import ch.simibu.pace.model.Routine
 import ch.simibu.pace.service.PaceTimerService
 
+import ch.simibu.pace.ui.components.TactileCard
+import ch.simibu.pace.ui.components.TactilePillButton
+import ch.simibu.pace.ui.theme.PaceBrandGradient
+import ch.simibu.pace.ui.theme.PaceMagenta
+import ch.simibu.pace.ui.theme.PaceRaspberry
+
 @Composable
 fun RoutinesScreen(
     onStartRoutine: (Routine) -> Unit,
@@ -75,13 +82,26 @@ fun RoutinesScreen(
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { isAddingNew = true },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                shape = CircleShape
+            TactilePillButton(
+                modifier = Modifier
+                    .size(60.dp)
+                    .clickable { isAddingNew = true },
+                shape = CircleShape,
+                elevation = 8.dp
             ) {
-                Icon(Icons.Rounded.Add, contentDescription = stringResource(R.string.routine_new))
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(PaceBrandGradient),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        Icons.Rounded.Add,
+                        contentDescription = stringResource(R.string.routine_new),
+                        tint = Color.White,
+                        modifier = Modifier.size(28.dp)
+                    )
+                }
             }
         }
     ) { padding ->
@@ -182,17 +202,15 @@ fun RoutineCard(
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
-    ElevatedCard(
+    TactileCard(
         modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.elevatedCardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        )
+        shape = RoundedCornerShape(22.dp),
+        elevation = 6.dp
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
+                .padding(18.dp)
         ) {
             // Header Row: Color bar, Name, Category chip, Action icons
             Row(
@@ -206,11 +224,14 @@ fun RoutineCard(
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(14.dp)
+                            .size(16.dp)
                             .clip(CircleShape)
-                            .background(routine.colorScheme.primaryColor)
+                            .background(
+                                if (routine.colorScheme == ch.simibu.pace.model.ColorSchemeOption.PACE) PaceBrandGradient
+                                else androidx.compose.ui.graphics.SolidColor(routine.colorScheme.primaryColor)
+                            )
                     )
-                    Spacer(modifier = Modifier.width(10.dp))
+                    Spacer(modifier = Modifier.width(12.dp))
                     Column {
                         Text(
                             text = routine.name,
@@ -236,7 +257,7 @@ fun RoutineCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(14.dp))
 
             // Details Row
             Row(
@@ -247,57 +268,70 @@ fun RoutineCard(
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     // Focus badge
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = routine.colorScheme.primaryColor.copy(alpha = 0.15f)
+                        shape = RoundedCornerShape(10.dp),
+                        color = routine.colorScheme.primaryColor.copy(alpha = 0.14f)
                     ) {
                         Text(
                             text = "Focus: %02d:%02d".format(routine.focusMinutes, routine.focusSeconds),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = routine.colorScheme.primaryColor,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                         )
                     }
 
                     // Break badge
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.15f)
+                        shape = RoundedCornerShape(10.dp),
+                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.14f)
                     ) {
                         Text(
                             text = "Break: %02d:%02d".format(routine.breakMinutes, routine.breakSeconds),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                         )
                     }
 
                     // Rounds badge
                     Surface(
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(10.dp),
                         color = MaterialTheme.colorScheme.surfaceVariant
                     ) {
                         Text(
                             text = "${routine.iterations}x",
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
                         )
                     }
                 }
 
                 // Play Button
-                FilledIconButton(
-                    onClick = onPlay,
+                TactilePillButton(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .clickable { onPlay() },
                     shape = CircleShape,
-                    modifier = Modifier.size(46.dp),
-                    colors = androidx.compose.material3.IconButtonDefaults.filledIconButtonColors(
-                        containerColor = routine.colorScheme.primaryColor,
-                        contentColor = Color.White
-                    )
+                    elevation = 6.dp
                 ) {
-                    Icon(Icons.Rounded.PlayArrow, contentDescription = "Start routine", modifier = Modifier.size(28.dp))
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                if (routine.colorScheme == ch.simibu.pace.model.ColorSchemeOption.PACE) PaceBrandGradient
+                                else androidx.compose.ui.graphics.SolidColor(routine.colorScheme.primaryColor)
+                            ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Rounded.PlayArrow,
+                            contentDescription = "Start routine",
+                            tint = Color.White,
+                            modifier = Modifier.size(28.dp)
+                        )
+                    }
                 }
             }
         }

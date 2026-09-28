@@ -48,7 +48,7 @@ private fun createLightColorScheme(accent: ColorSchemeOption) = lightColorScheme
 @Composable
 fun PaceAmigoTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    accentOption: ColorSchemeOption = ColorSchemeOption.CORAL,
+    accentOption: ColorSchemeOption = ColorSchemeOption.PACE,
     content: @Composable () -> Unit
 ) {
     val colorScheme = if (darkTheme) {

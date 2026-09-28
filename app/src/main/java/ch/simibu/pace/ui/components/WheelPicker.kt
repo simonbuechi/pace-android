@@ -106,14 +106,13 @@ fun WheelPicker(
                 .width(52.dp),
             contentAlignment = Alignment.Center
         ) {
-            // Selected item indicator frame
-            Surface(
+            // Selected item indicator frame (soft tactile well)
+            TactileSunkenWell(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(itemHeight)
                     .padding(horizontal = 2.dp),
-                shape = RoundedCornerShape(10.dp),
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                shape = RoundedCornerShape(10.dp)
             ) {}
 
             LazyColumn(
@@ -141,7 +140,7 @@ fun WheelPicker(
                         Text(
                             text = "%02d".format(items[index]),
                             style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Medium,
                                 fontSize = 22.sp
                             ),
                             color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
@@ -181,12 +180,10 @@ fun TimeDurationWheelPicker(
     onSecondsChanged: (Int) -> Unit,
     title: String
 ) {
-    Card(
+    TactileCard(
         modifier = modifier,
-        shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f)
-        )
+        shape = RoundedCornerShape(22.dp),
+        elevation = 6.dp
     ) {
         Column(
             modifier = Modifier
@@ -197,7 +194,7 @@ fun TimeDurationWheelPicker(
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1
             )
@@ -219,6 +216,7 @@ fun TimeDurationWheelPicker(
                 Text(
                     text = ":",
                     style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp)
                 )

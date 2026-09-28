@@ -14,7 +14,7 @@ data class Routine(
     val iterations: Int = 8,
     val warmupSeconds: Int = 0,
     val soundSchemeId: String = SoundScheme.BEEP.id,
-    val colorSchemeId: String = ColorSchemeOption.CORAL.id
+    val colorSchemeId: String = ColorSchemeOption.PACE.id
 ) {
     val totalFocusSeconds: Int
         get() = (focusMinutes * 60) + focusSeconds
@@ -44,7 +44,7 @@ data class Routine(
                 iterations = 8,
                 warmupSeconds = 10,
                 soundSchemeId = SoundScheme.BELL.id,
-                colorSchemeId = ColorSchemeOption.CORAL.id
+                colorSchemeId = ColorSchemeOption.PACE.id
             ),
             Routine(
                 id = "preset_pomodoro",

@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import ch.simibu.pace.PaceApplication
 import ch.simibu.pace.R
 import ch.simibu.pace.data.SettingsRepository
+import ch.simibu.pace.ui.components.TactileCard
 
 @Composable
 fun SettingsScreen() {
@@ -66,10 +67,10 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(20.dp))
 
         // Appearance / Theme Card
-        Card(
+        TactileCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+            shape = RoundedCornerShape(22.dp),
+            elevation = 4.dp
         ) {
             Column(
                 modifier = Modifier
@@ -117,10 +118,10 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Sound & Haptics Card
-        Card(
+        TactileCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+            shape = RoundedCornerShape(22.dp),
+            elevation = 4.dp
         ) {
             Column(
                 modifier = Modifier
@@ -205,10 +206,10 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Screen Awake Card
-        Card(
+        TactileCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+            shape = RoundedCornerShape(22.dp),
+            elevation = 4.dp
         ) {
             Row(
                 modifier = Modifier
@@ -251,10 +252,10 @@ fun SettingsScreen() {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Language Information Card
-        Card(
+        TactileCard(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(20.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f))
+            shape = RoundedCornerShape(22.dp),
+            elevation = 4.dp
         ) {
             Row(
                 modifier = Modifier

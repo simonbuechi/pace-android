@@ -3,6 +3,8 @@ package ch.simibu.pace.model
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import ch.simibu.pace.R
+import ch.simibu.pace.ui.theme.PaceMagenta
+import ch.simibu.pace.ui.theme.PaceRaspberry
 
 enum class ColorSchemeOption(
     val id: String,
@@ -10,6 +12,12 @@ enum class ColorSchemeOption(
     val primaryColor: Color,
     val secondaryColor: Color
 ) {
+    PACE(
+        id = "pace",
+        titleRes = R.string.color_pace,
+        primaryColor = PaceMagenta,
+        secondaryColor = PaceRaspberry
+    ),
     CORAL(
         id = "coral",
         titleRes = R.string.color_coral,
@@ -43,6 +51,6 @@ enum class ColorSchemeOption(
 
     companion object {
         fun fromId(id: String?): ColorSchemeOption =
-            entries.firstOrNull { it.id.equals(id, ignoreCase = true) } ?: CORAL
+            entries.firstOrNull { it.id.equals(id, ignoreCase = true) } ?: PACE
     }
 }
