@@ -61,12 +61,12 @@ import ch.simibu.pace.service.PaceTimerService
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import ch.simibu.pace.ui.components.TactileCard
+import ch.simibu.pace.ui.components.TactileCircleButton
 import ch.simibu.pace.ui.components.TactilePillButton
+import ch.simibu.pace.ui.components.TactileSunkenWell
 import ch.simibu.pace.ui.theme.PaceBrandGradient
 import ch.simibu.pace.ui.theme.PaceMagenta
 import ch.simibu.pace.ui.theme.PaceRaspberry
-import ch.simibu.pace.ui.theme.PhaseCooldownColor
-import ch.simibu.pace.ui.theme.PhaseWarmupColor
 
 @Composable
 fun RoutinesScreen(
@@ -209,163 +209,190 @@ fun RoutineCard(
     TactileCard(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(22.dp),
-        elevation = 6.dp
+        elevation = 8.dp
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(18.dp)
+                .padding(horizontal = 20.dp, vertical = 18.dp)
         ) {
-            // Header Row: Color bar, Name, Category chip, Action icons
+            // Header Row: Routine Name & Unified Total Duration Pill
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(16.dp)
-                            .clip(CircleShape)
-                            .background(
-                                if (routine.colorScheme == ch.simibu.pace.model.ColorSchemeOption.PACE) PaceBrandGradient
-                                else androidx.compose.ui.graphics.SolidColor(routine.colorScheme.primaryColor)
-                            )
-                    )
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text(
-                        text = routine.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                Text(
+                    text = routine.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.weight(1f, fill = false)
+                )
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    IconButton(onClick = onEdit) {
-                        Icon(Icons.Rounded.Edit, contentDescription = "Edit", modifier = Modifier.size(20.dp))
-                    }
-                    IconButton(onClick = onDelete) {
-                        Icon(Icons.Rounded.Delete, contentDescription = "Delete", modifier = Modifier.size(20.dp))
-                    }
+                Spacer(modifier = Modifier.width(12.dp))
+
+                // Single unified total duration pill
+                TactileSunkenWell(
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    val totalSec = routine.totalDurationSeconds
+                    val mins = totalSec / 60
+                    val secs = totalSec % 60
+                    val durationText = if (mins > 0 && secs > 0) "${mins}m ${secs}s"
+                    else if (mins > 0) "${mins} min"
+                    else "${secs} sec"
+                    Text(
+                        text = durationText,
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp)
+                    )
                 }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Primary Metrics (Clean, elegant, calm typography - zero rainbow badges)
+            val focusStr = if (routine.focusMinutes > 0 && routine.focusSeconds > 0) "${routine.focusMinutes}m ${routine.focusSeconds}s"
+            else if (routine.focusMinutes > 0) "${routine.focusMinutes}m"
+            else "${routine.focusSeconds}s"
+
+            val breakStr = if (routine.breakMinutes > 0 && routine.breakSeconds > 0) "${routine.breakMinutes}m ${routine.breakSeconds}s"
+            else if (routine.breakMinutes > 0) "${routine.breakMinutes}m"
+            else "${routine.breakSeconds}s"
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                Text(
+                    text = focusStr,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = stringResource(R.string.timer_phase_focus),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "•",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                )
+                Text(
+                    text = breakStr,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = stringResource(R.string.timer_phase_break),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(
+                    text = "•",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+                )
+                Text(
+                    text = "${routine.iterations}x",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = PaceRaspberry
+                )
+            }
+
+            // Optional Warm-up & Cool-down line (Subtle and quiet)
+            if (routine.totalWarmupSeconds > 0 || routine.totalCooldownSeconds > 0) {
+                Spacer(modifier = Modifier.height(4.dp))
+                val warmupPart = if (routine.totalWarmupSeconds > 0) {
+                    val wStr = if (routine.warmupMinutes > 0 && routine.warmupSeconds > 0) "${routine.warmupMinutes}m ${routine.warmupSeconds}s"
+                    else if (routine.warmupMinutes > 0) "${routine.warmupMinutes}m"
+                    else "${routine.warmupSeconds}s"
+                    "+ $wStr " + stringResource(R.string.timer_phase_warmup)
+                } else null
+
+                val cooldownPart = if (routine.totalCooldownSeconds > 0) {
+                    val cStr = if (routine.cooldownMinutes > 0 && routine.cooldownSeconds > 0) "${routine.cooldownMinutes}m ${routine.cooldownSeconds}s"
+                    else if (routine.cooldownMinutes > 0) "${routine.cooldownMinutes}m"
+                    else "${routine.cooldownSeconds}s"
+                    "+ $cStr " + stringResource(R.string.timer_phase_cooldown)
+                } else null
+
+                val extraText = listOfNotNull(warmupPart, cooldownPart).joinToString("   •   ")
+
+                Text(
+                    text = extraText,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                )
             }
 
             Spacer(modifier = Modifier.height(14.dp))
 
-            // Details Row
+            // Action Row: Edit & Delete (Subtle left), Start Button (Tactile Right)
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier
-                        .weight(1f)
-                        .horizontalScroll(rememberScrollState())
-                        .padding(end = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    // Warm-up badge if set
-                    if (routine.totalWarmupSeconds > 0) {
-                        Surface(
-                            shape = RoundedCornerShape(10.dp),
-                            color = PhaseWarmupColor.copy(alpha = 0.16f)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.badge_warmup, routine.warmupMinutes, routine.warmupSeconds),
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = PhaseWarmupColor,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
-                            )
-                        }
-                    }
-
-                    // Focus badge
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = routine.colorScheme.primaryColor.copy(alpha = 0.14f)
+                    IconButton(
+                        onClick = onEdit,
+                        modifier = Modifier.size(36.dp)
                     ) {
-                        Text(
-                            text = stringResource(R.string.badge_focus, routine.focusMinutes, routine.focusSeconds),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = routine.colorScheme.primaryColor,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                        Icon(
+                            Icons.Rounded.Edit,
+                            contentDescription = "Edit",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
-
-                    // Break badge
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = MaterialTheme.colorScheme.secondary.copy(alpha = 0.14f)
+                    IconButton(
+                        onClick = onDelete,
+                        modifier = Modifier.size(36.dp)
                     ) {
-                        Text(
-                            text = stringResource(R.string.badge_break, routine.breakMinutes, routine.breakSeconds),
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
-                        )
-                    }
-
-                    // Cool-down badge if set
-                    if (routine.totalCooldownSeconds > 0) {
-                        Surface(
-                            shape = RoundedCornerShape(10.dp),
-                            color = PhaseCooldownColor.copy(alpha = 0.16f)
-                        ) {
-                            Text(
-                                text = stringResource(R.string.badge_cooldown, routine.cooldownMinutes, routine.cooldownSeconds),
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.SemiBold,
-                                color = PhaseCooldownColor,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
-                            )
-                        }
-                    }
-
-                    // Rounds badge
-                    Surface(
-                        shape = RoundedCornerShape(10.dp),
-                        color = MaterialTheme.colorScheme.surfaceVariant
-                    ) {
-                        Text(
-                            text = "${routine.iterations}x",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 5.dp)
+                        Icon(
+                            Icons.Rounded.Delete,
+                            contentDescription = "Delete",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f),
+                            modifier = Modifier.size(18.dp)
                         )
                     }
                 }
 
-                // Play Button
                 TactilePillButton(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clickable { onPlay() },
-                    shape = CircleShape,
-                    elevation = 6.dp
+                    onClick = onPlay,
+                    modifier = Modifier.height(42.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = 6.dp,
+                    useBrandGradient = true
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(
-                                if (routine.colorScheme == ch.simibu.pace.model.ColorSchemeOption.PACE) PaceBrandGradient
-                                else androidx.compose.ui.graphics.SolidColor(routine.colorScheme.primaryColor)
-                            ),
-                        contentAlignment = Alignment.Center
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center
                     ) {
                         Icon(
                             Icons.Rounded.PlayArrow,
-                            contentDescription = "Start routine",
+                            contentDescription = null,
                             tint = Color.White,
-                            modifier = Modifier.size(28.dp)
+                            modifier = Modifier.size(20.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = stringResource(R.string.start_timer),
+                            style = MaterialTheme.typography.labelLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.White
                         )
                     }
                 }

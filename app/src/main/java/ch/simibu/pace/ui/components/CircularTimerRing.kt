@@ -46,7 +46,8 @@ fun CircularTimerRing(
     phase: TimerPhase,
     remainingSeconds: Int,
     accentColor: Color,
-    strokeWidth: Dp = 18.dp,
+    strokeWidth: Dp = 16.dp,
+    isMuted: Boolean = true,
     content: (@Composable () -> Unit)? = null
 ) {
     val animatedProgress by animateFloatAsState(
@@ -75,7 +76,7 @@ fun CircularTimerRing(
     val pulseScale by if (isWarningCountdown) {
         infiniteTransition.animateFloat(
             initialValue = 1.0f,
-            targetValue = 1.05f,
+            targetValue = 1.04f,
             animationSpec = infiniteRepeatable(
                 animation = tween(durationMillis = 500, easing = FastOutSlowInEasing),
                 repeatMode = RepeatMode.Reverse
@@ -87,8 +88,9 @@ fun CircularTimerRing(
     }
 
     val isDark = isTactileThemeDark()
-    val trackBgColor = if (isDark) PaceDarkSurfaceSunken else PaceLightSurfaceSunken
-    val trackBorderColor = if (isDark) Color.White.copy(alpha = 0.06f) else Color.Black.copy(alpha = 0.05f)
+    val baseTrackBg = if (isDark) PaceDarkSurfaceSunken else PaceLightSurfaceSunken
+    val trackBgColor = if (isMuted) baseTrackBg.copy(alpha = if (isDark) 0.40f else 0.50f) else baseTrackBg
+    val trackBorderColor = if (isDark) Color.White.copy(alpha = if (isMuted) 0.03f else 0.06f) else Color.Black.copy(alpha = if (isMuted) 0.03f else 0.05f)
 
     val targetColors = when (phase) {
         TimerPhase.WARMUP -> listOf(PhaseWarmupColor, Color(0xFFFFB74D))
@@ -97,6 +99,8 @@ fun CircularTimerRing(
         TimerPhase.COOLDOWN -> listOf(PhaseCooldownColor, Color(0xFF80DEEA))
         TimerPhase.COMPLETED -> listOf(PaceMagenta, PaceRaspberry)
     }
+
+    val arcAlpha = if (isMuted) (if (isDark) 0.32f else 0.38f) else 1.0f
 
     Box(
         modifier = modifier
@@ -135,14 +139,14 @@ fun CircularTimerRing(
                 style = Stroke(width = strokePx, cap = StrokeCap.Round)
             )
 
-            // Progress Arc with Gradient
+            // Progress Arc with Muted Tactile Gradient
             val sweep = animatedProgress * 360f
             if (sweep > 0f) {
                 drawArc(
                     brush = Brush.sweepGradient(
-                        0f to targetColors[0],
-                        0.5f to targetColors[1],
-                        1f to targetColors[0]
+                        0f to targetColors[0].copy(alpha = arcAlpha),
+                        0.5f to targetColors[1].copy(alpha = arcAlpha),
+                        1f to targetColors[0].copy(alpha = arcAlpha)
                     ),
                     startAngle = -90f,
                     sweepAngle = sweep,

@@ -175,12 +175,12 @@ fun TimerScreen(
         val screenHeight = maxHeight
         val isLandscape = screenWidth > screenHeight
         val ringDiameter = if (isLandscape) {
-            min(screenHeight - 20.dp, screenWidth * 0.65f)
+            min(screenHeight - 12.dp, screenWidth * 0.85f)
         } else {
             min(screenWidth - 12.dp, screenHeight * 0.64f)
         }
 
-        // Layer 1: Background Circular Countdown Ring
+        // Layer 1: Background Circular Countdown Ring (Soft & Muted)
         Box(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
@@ -191,67 +191,119 @@ fun TimerScreen(
                 phase = timerState.phase,
                 remainingSeconds = timerState.remainingSecondsInPhase,
                 accentColor = PaceRaspberry,
-                strokeWidth = 18.dp
+                strokeWidth = if (isLandscape) 14.dp else 16.dp,
+                isMuted = true
             )
         }
 
-        // Layer 2: Center Typography & Information (Giant Digits filling screen)
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+        // Layer 2: Center Typography & Information
+        if (isLandscape) {
+            // Landscape Top Metadata Bar (Compact so center digits have 100% vertical freedom)
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)
+                    .align(Alignment.TopCenter)
+                    .padding(top = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Phase Badge
                 TactileSunkenWell(
-                    shape = RoundedCornerShape(20.dp),
-                    modifier = Modifier.padding(bottom = if (isLandscape) 6.dp else 14.dp)
+                    shape = RoundedCornerShape(14.dp)
                 ) {
                     Text(
                         text = stringResource(timerState.phase.titleRes).uppercase(),
-                        style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
+                        style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.5.sp),
                         fontWeight = FontWeight.ExtraBold,
                         color = phaseColor,
-                        modifier = Modifier.padding(horizontal = 22.dp, vertical = if (isLandscape) 5.dp else 8.dp)
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
                     )
                 }
 
-                // Giant Countdown Digits filling the screen
+                if (!timerState.isCompleted) {
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = stringResource(
+                            R.string.round_indicator,
+                            timerState.currentRound,
+                            timerState.totalRounds
+                        ) + if (timerState.routineName.isNotBlank()) "  •  ${timerState.routineName}" else "",
+                        style = MaterialTheme.typography.labelMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+                    )
+                }
+            }
+
+            // Landscape Giant Countdown Digits (Fills the entire display height & width)
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
                 AutoSizingTimerText(
                     text = if (timerState.isCompleted) "✓" else timerState.formattedRemainingTime,
                     color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground,
-                    maxFontSize = if (isLandscape) (screenHeight.value * 0.44f).sp else (screenWidth.value * 0.38f).sp
+                    maxFontSize = (screenHeight.value * 0.88f).sp
                 )
-
-                // Round Indicator / Subtitle
-                if (!timerState.isCompleted) {
-                    Spacer(modifier = Modifier.height(if (isLandscape) 4.dp else 12.dp))
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
+            }
+        } else {
+            // Portrait Layout: Stacked Phase Badge, Digits & Round Info
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp)
+                ) {
+                    // Phase Badge
+                    TactileSunkenWell(
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier.padding(bottom = 14.dp)
                     ) {
                         Text(
-                            text = stringResource(
-                                R.string.round_indicator,
-                                timerState.currentRound,
-                                timerState.totalRounds
-                            ),
-                            style = if (isLandscape) MaterialTheme.typography.titleSmall else MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            text = stringResource(timerState.phase.titleRes).uppercase(),
+                            style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
+                            fontWeight = FontWeight.ExtraBold,
+                            color = phaseColor,
+                            modifier = Modifier.padding(horizontal = 22.dp, vertical = 8.dp)
                         )
-                        if (isLandscape && timerState.routineName.isNotBlank()) {
+                    }
+
+                    // Giant Countdown Digits filling the screen
+                    AutoSizingTimerText(
+                        text = if (timerState.isCompleted) "✓" else timerState.formattedRemainingTime,
+                        color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground,
+                        maxFontSize = (screenWidth.value * 0.42f).sp
+                    )
+
+                    // Round Indicator / Subtitle
+                    if (!timerState.isCompleted) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center
+                        ) {
                             Text(
-                                text = "  •  " + timerState.routineName,
-                                style = MaterialTheme.typography.titleSmall,
-                                fontWeight = FontWeight.Medium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                text = stringResource(
+                                    R.string.round_indicator,
+                                    timerState.currentRound,
+                                    timerState.totalRounds
+                                ),
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
+                            if (timerState.routineName.isNotBlank()) {
+                                Text(
+                                    text = "  •  " + timerState.routineName,
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
+                                )
+                            }
                         }
                     }
                 }
