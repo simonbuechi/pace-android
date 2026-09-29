@@ -43,6 +43,7 @@ proguard/
 # Keystore files
 *.jks
 *.keystore
+keystore.properties
 
 # External native build folder
 .externalNativeBuild

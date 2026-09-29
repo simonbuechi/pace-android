@@ -95,12 +95,19 @@ ch.simibu.pace
    ./gradlew assembleDebug
    ```
 
-4. **Install to connected device via ADB**:
+4. **Build Production Release Bundle (AAB for Google Play)**:
+   ```bash
+   ./gradlew bundleRelease
+   ```
+   The signed release bundle will be generated at:
+   `app/build/outputs/bundle/release/app-release.aab`
+
+5. **Install to connected device via ADB**:
    ```bash
    adb install -r app/build/outputs/apk/debug/app-debug.apk
    ```
 
-5. **Launch Pace Amigo**:
+6. **Launch Pace**:
    ```bash
    adb shell am start -n ch.simibu.pace/.MainActivity
    ```
@@ -109,7 +116,9 @@ ch.simibu.pace
 
 ## 📖 Further Documentation
 
-- For in-depth design specifications, color tokens, layout formulas, and tactile component guidelines, refer to **[`DESIGN.md`](DESIGN.md)**.
+- **[`PLAY_STORE.md`](PLAY_STORE.md)** — Complete Google Play Store listing copy (English & German), metadata, character counts, and submission steps.
+- **[`PRIVACY_POLICY.md`](PRIVACY_POLICY.md)** — Comprehensive privacy policy and permission disclosures for store review.
+- **[`DESIGN.md`](DESIGN.md)** — In-depth design specifications, color tokens, layout formulas, and tactile component guidelines.
 
 ---
 

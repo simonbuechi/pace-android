@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -19,6 +21,36 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    val keystorePropertiesFile = rootProject.file("keystore.properties")
+    val keystoreProperties = Properties()
+    val hasReleaseKeystore = if (keystorePropertiesFile.exists()) {
+        keystorePropertiesFile.inputStream().use { stream ->
+            keystoreProperties.load(stream)
+        }
+        true
+    } else false
+
+    signingConfigs {
+        create("release") {
+            if (hasReleaseKeystore) {
+                val storeRelPath = keystoreProperties.getProperty("storeFile") ?: "app/upload-keystore.jks"
+                val resolvedStore = listOf(
+                    file(storeRelPath),
+                    rootProject.file(storeRelPath),
+                    file("upload-keystore.jks"),
+                    rootProject.file("app/upload-keystore.jks")
+                ).firstOrNull { it.exists() }
+
+                if (resolvedStore != null) {
+                    storeFile = resolvedStore
+                    storePassword = keystoreProperties.getProperty("storePassword")
+                    keyAlias = keystoreProperties.getProperty("keyAlias")
+                    keyPassword = keystoreProperties.getProperty("keyPassword")
+                }
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -26,6 +58,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            if (hasReleaseKeystore) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
     compileOptions {
