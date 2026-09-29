@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Wznów</string>
     <string name="notification_action_skip">Pomiń</string>
     <string name="notification_action_stop">Zatrzymaj</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Pokaż historię</string>
+    <string name="routine_log_title">Historia rutyny</string>
+    <string name="routine_log_empty">Brak zapisanych ukończeń</string>
+    <string name="routine_log_empty_desc">Ukończ tę rutynę bez anulowania, aby zapisać swoje sesje tutaj.</string>
+    <string name="routine_log_completed_count">%d ukończonych</string>
+    <string name="routine_log_clear">Wyczyść historię</string>
+    <string name="routine_log_clear_confirm">Wyczyścić całą historię dla tej rutyny?</string>
+    <string name="btn_close">Zamknij</string>
 </resources>

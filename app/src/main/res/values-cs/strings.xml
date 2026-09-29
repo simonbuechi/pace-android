@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Pokračovat</string>
     <string name="notification_action_skip">Přeskočit</string>
     <string name="notification_action_stop">Zastavit</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Zobrazit historii</string>
+    <string name="routine_log_title">Historie rutiny</string>
+    <string name="routine_log_empty">Zatím žádné dokončené tréninky</string>
+    <string name="routine_log_empty_desc">Dokončete tuto rutinu bez zrušení a zaznamenejte si trénink zde.</string>
+    <string name="routine_log_completed_count">%d dokončeno</string>
+    <string name="routine_log_clear">Vymazat historii</string>
+    <string name="routine_log_clear_confirm">Vymazat všechny záznamy pro tuto rutinu?</string>
+    <string name="btn_close">Zavřít</string>
 </resources>

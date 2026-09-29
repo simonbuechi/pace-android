@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Genoptag</string>
     <string name="notification_action_skip">Spring over</string>
     <string name="notification_action_stop">Stop</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Vis historik</string>
+    <string name="routine_log_title">Rutinehistorik</string>
+    <string name="routine_log_empty">Ingen fuldførte sessioner endnu</string>
+    <string name="routine_log_empty_desc">Gennemfør denne rutine uden at annullere for at logge dine sessioner her.</string>
+    <string name="routine_log_completed_count">%d fuldført</string>
+    <string name="routine_log_clear">Ryd historik</string>
+    <string name="routine_log_clear_confirm">Ryd alle logfiler for denne rutine?</string>
+    <string name="btn_close">Luk</string>
 </resources>

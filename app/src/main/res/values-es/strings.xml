@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Reanudar</string>
     <string name="notification_action_skip">Saltar</string>
     <string name="notification_action_stop">Detener</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Ver historial</string>
+    <string name="routine_log_title">Historial de rutina</string>
+    <string name="routine_log_empty">No hay sesiones registradas aún</string>
+    <string name="routine_log_empty_desc">Completa esta rutina sin cancelarla para registrar tus sesiones aquí.</string>
+    <string name="routine_log_completed_count">%d completadas</string>
+    <string name="routine_log_clear">Borrar historial</string>
+    <string name="routine_log_clear_confirm">¿Borrar todos los registros de esta rutina?</string>
+    <string name="btn_close">Cerrar</string>
 </resources>

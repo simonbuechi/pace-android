@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Återuppta</string>
     <string name="notification_action_skip">Hoppa över</string>
     <string name="notification_action_stop">Stoppa</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Visa historik</string>
+    <string name="routine_log_title">Rutinhistorik</string>
+    <string name="routine_log_empty">Inga slutföranden loggade än</string>
+    <string name="routine_log_empty_desc">Slutför denna rutin utan att avbryta för att logga dina pass här.</string>
+    <string name="routine_log_completed_count">%d slutförda</string>
+    <string name="routine_log_clear">Rensa historik</string>
+    <string name="routine_log_clear_confirm">Rensa alla loggar för denna rutin?</string>
+    <string name="btn_close">Stäng</string>
 </resources>

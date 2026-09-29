@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Reia</string>
     <string name="notification_action_skip">Sari</string>
     <string name="notification_action_stop">Oprește</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Afișare istoric</string>
+    <string name="routine_log_title">Istoric rutină</string>
+    <string name="routine_log_empty">Nicio finalizare înregistrată încă</string>
+    <string name="routine_log_empty_desc">Finalizează această rutină fără anulare pentru a înregistra sesiunile aici.</string>
+    <string name="routine_log_completed_count">%d finalizate</string>
+    <string name="routine_log_clear">Șterge istoricul</string>
+    <string name="routine_log_clear_confirm">Ștergi toate înregistrările pentru această rutină?</string>
+    <string name="btn_close">Închide</string>
 </resources>

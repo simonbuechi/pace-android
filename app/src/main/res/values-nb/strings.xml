@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Gjenoppta</string>
     <string name="notification_action_skip">Hopp over</string>
     <string name="notification_action_stop">Stopp</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Vis logg</string>
+    <string name="routine_log_title">Rutinehistorikk</string>
+    <string name="routine_log_empty">Ingen fullførte økter logget ennå</string>
+    <string name="routine_log_empty_desc">Fullfør denne rutinen uten å avbryte for å logge øktene dine her.</string>
+    <string name="routine_log_completed_count">%d fullført</string>
+    <string name="routine_log_clear">Tøm logg</string>
+    <string name="routine_log_clear_confirm">Slette alle logger for denne rutinen?</string>
+    <string name="btn_close">Lukk</string>
 </resources>

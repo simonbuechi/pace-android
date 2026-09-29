@@ -23,6 +23,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.FitnessCenter
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material.icons.rounded.VolumeUp
 import androidx.compose.material3.AlertDialog
@@ -76,11 +77,14 @@ fun RoutinesScreen(
 ) {
     val context = LocalContext.current
     val routineRepo = PaceApplication.instance.routineRepository
+    val routineLogRepo = PaceApplication.instance.routineLogRepository
     val timerEngine = PaceApplication.instance.timerEngine
 
     val routines by routineRepo.routines.collectAsState()
+    val logs by routineLogRepo.logs.collectAsState()
 
     var editingRoutine by remember { mutableStateOf<Routine?>(null) }
+    var viewingLogRoutine by remember { mutableStateOf<Routine?>(null) }
     var isAddingNew by remember { mutableStateOf(showNewRoutineDialog) }
     var routineToDelete by remember { mutableStateOf<Routine?>(null) }
 
@@ -147,6 +151,7 @@ fun RoutinesScreen(
                                 PaceTimerService.start(context)
                                 onStartRoutine(routine)
                             },
+                            onViewLog = { viewingLogRoutine = routine },
                             onEdit = { editingRoutine = routine },
                             onDelete = { routineToDelete = routine }
                         )
@@ -154,6 +159,17 @@ fun RoutinesScreen(
                 }
             }
         }
+    }
+
+    // Routine Log Viewer Dialog
+    viewingLogRoutine?.let { routine ->
+        val routineLogs = logs.filter { it.routineId == routine.id }
+        RoutineLogDialog(
+            routine = routine,
+            logs = routineLogs,
+            onDismiss = { viewingLogRoutine = null },
+            onClearLogs = { routineLogRepo.clearLogsForRoutine(routine.id) }
+        )
     }
 
     // Routine Editor Dialog
@@ -184,6 +200,7 @@ fun RoutinesScreen(
                 TextButton(
                     onClick = {
                         routineRepo.deleteRoutine(routine.id)
+                        routineLogRepo.clearLogsForRoutine(routine.id)
                         routineToDelete = null
                     }
                 ) {
@@ -203,6 +220,7 @@ fun RoutinesScreen(
 fun RoutineCard(
     routine: Routine,
     onPlay: () -> Unit,
+    onViewLog: () -> Unit,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -346,12 +364,23 @@ fun RoutineCard(
                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     IconButton(
+                        onClick = onViewLog,
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            Icons.Rounded.History,
+                            contentDescription = stringResource(R.string.routine_view_log),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    IconButton(
                         onClick = onEdit,
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
                             Icons.Rounded.Edit,
-                            contentDescription = "Edit",
+                            contentDescription = stringResource(R.string.routine_edit),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f),
                             modifier = Modifier.size(18.dp)
                         )
@@ -362,7 +391,7 @@ fun RoutineCard(
                     ) {
                         Icon(
                             Icons.Rounded.Delete,
-                            contentDescription = "Delete",
+                            contentDescription = stringResource(R.string.btn_delete),
                             tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.45f),
                             modifier = Modifier.size(18.dp)
                         )

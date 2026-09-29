@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Jatka</string>
     <string name="notification_action_skip">Ohita</string>
     <string name="notification_action_stop">Lopeta</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Näytä historia</string>
+    <string name="routine_log_title">Rutiinihistoria</string>
+    <string name="routine_log_empty">Ei vielä kirjattuja suorituksia</string>
+    <string name="routine_log_empty_desc">Suorita tämä rutiini keskeyttämättä tallentaaksesi istuntosi tähän.</string>
+    <string name="routine_log_completed_count">%d suoritettu</string>
+    <string name="routine_log_clear">Tyhjennä historia</string>
+    <string name="routine_log_clear_confirm">Tyhjennetäänkö kaikki tämän rutiinin lokit?</string>
+    <string name="btn_close">Sulje</string>
 </resources>

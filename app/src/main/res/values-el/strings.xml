@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Συνέχιση</string>
     <string name="notification_action_skip">Παράλειψη</string>
     <string name="notification_action_stop">Διακοπή</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Προβολή ιστορικού</string>
+    <string name="routine_log_title">Ιστορικό ρουτίνας</string>
+    <string name="routine_log_empty">Δεν έχουν καταγραφεί ολοκληρώσεις ακόμα</string>
+    <string name="routine_log_empty_desc">Ολοκληρώστε αυτή τη ρουτίνα χωρίς ακύρωση για να καταγράψετε τις συνεδρίες σας εδώ.</string>
+    <string name="routine_log_completed_count">%d ολοκληρώθηκαν</string>
+    <string name="routine_log_clear">Εκκαθάριση ιστορικού</string>
+    <string name="routine_log_clear_confirm">Εκκαθάριση όλων των καταγραφών για αυτή τη ρουτίνα;</string>
+    <string name="btn_close">Κλείσιμο</string>
 </resources>

@@ -5,6 +5,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.os.Build
 import ch.simibu.pace.audio.SoundManager
+import ch.simibu.pace.data.RoutineLogRepository
 import ch.simibu.pace.data.RoutineRepository
 import ch.simibu.pace.data.SettingsRepository
 import ch.simibu.pace.engine.TimerEngine
@@ -14,6 +15,8 @@ class PaceApplication : Application() {
     lateinit var soundManager: SoundManager
         private set
     lateinit var routineRepository: RoutineRepository
+        private set
+    lateinit var routineLogRepository: RoutineLogRepository
         private set
     lateinit var settingsRepository: SettingsRepository
         private set
@@ -26,8 +29,9 @@ class PaceApplication : Application() {
 
         soundManager = SoundManager(this)
         routineRepository = RoutineRepository(this)
+        routineLogRepository = RoutineLogRepository(this)
         settingsRepository = SettingsRepository(this)
-        timerEngine = TimerEngine()
+        timerEngine = TimerEngine(routineLogRepository = routineLogRepository)
 
         createNotificationChannel()
     }

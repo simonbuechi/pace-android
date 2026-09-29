@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Folytatás</string>
     <string name="notification_action_skip">Ugrás</string>
     <string name="notification_action_stop">Leállítás</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Napló megtekintése</string>
+    <string name="routine_log_title">Rutinelőzmények</string>
+    <string name="routine_log_empty">Még nincs rögzített befejezés</string>
+    <string name="routine_log_empty_desc">Fejezze be ezt a rutint megszakítás nélkül, hogy itt rögzítse az edzéseket.</string>
+    <string name="routine_log_completed_count">%d befejezve</string>
+    <string name="routine_log_clear">Napló törlése</string>
+    <string name="routine_log_clear_confirm">Törli a rutinhoz tartozó összes befejezési naplót?</string>
+    <string name="btn_close">Bezárás</string>
 </resources>

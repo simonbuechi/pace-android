@@ -112,4 +112,14 @@
     <string name="notification_action_resume">Resume</string>
     <string name="notification_action_skip">Skip</string>
     <string name="notification_action_stop">Stop</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">View Log</string>
+    <string name="routine_log_title">Routine History</string>
+    <string name="routine_log_empty">No completions logged yet</string>
+    <string name="routine_log_empty_desc">Complete this routine without cancelling to log your sessions here.</string>
+    <string name="routine_log_completed_count">%d completed</string>
+    <string name="routine_log_clear">Clear History</string>
+    <string name="routine_log_clear_confirm">Clear all completion logs for this routine?</string>
+    <string name="btn_close">Close</string>
 </resources>

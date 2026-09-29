@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Reprendre</string>
     <string name="notification_action_skip">Passer</string>
     <string name="notification_action_stop">Arrêter</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Historique</string>
+    <string name="routine_log_title">Historique de routine</string>
+    <string name="routine_log_empty">Aucune séance enregistrée</string>
+    <string name="routine_log_empty_desc">Terminez cette routine sans l\'annuler pour enregistrer vos séances ici.</string>
+    <string name="routine_log_completed_count">%d terminées</string>
+    <string name="routine_log_clear">Effacer l\'historique</string>
+    <string name="routine_log_clear_confirm">Effacer toutes les séances enregistrées pour cette routine ?</string>
+    <string name="btn_close">Fermer</string>
 </resources>

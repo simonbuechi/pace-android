@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Retomar</string>
     <string name="notification_action_skip">Avançar</string>
     <string name="notification_action_stop">Parar</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Ver histórico</string>
+    <string name="routine_log_title">Histórico da rotina</string>
+    <string name="routine_log_empty">Nenhuma conclusão registada</string>
+    <string name="routine_log_empty_desc">Conclua esta rotina sem cancelar para registar as suas sessões aqui.</string>
+    <string name="routine_log_completed_count">%d concluídas</string>
+    <string name="routine_log_clear">Limpar histórico</string>
+    <string name="routine_log_clear_confirm">Limpar todos os registos desta rotina?</string>
+    <string name="btn_close">Fechar</string>
 </resources>

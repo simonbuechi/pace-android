@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Riprendi</string>
     <string name="notification_action_skip">Salta</string>
     <string name="notification_action_stop">Ferma</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Cronologia</string>
+    <string name="routine_log_title">Cronologia routine</string>
+    <string name="routine_log_empty">Nessuna sessione registrata</string>
+    <string name="routine_log_empty_desc">Completa questa routine senza annullarla per registrare le tue sessioni qui.</string>
+    <string name="routine_log_completed_count">%d completate</string>
+    <string name="routine_log_clear">Cancella cronologia</string>
+    <string name="routine_log_clear_confirm">Cancellare tutti i record di questa routine?</string>
+    <string name="btn_close">Chiudi</string>
 </resources>

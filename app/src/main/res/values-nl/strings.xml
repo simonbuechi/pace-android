@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Hervatten</string>
     <string name="notification_action_skip">Overslaan</string>
     <string name="notification_action_stop">Stoppen</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Geschiedenis</string>
+    <string name="routine_log_title">Routinegeschiedenis</string>
+    <string name="routine_log_empty">Nog geen sessies gelogd</string>
+    <string name="routine_log_empty_desc">Voltooi deze routine zonder te annuleren om je sessies hier vast te leggen.</string>
+    <string name="routine_log_completed_count">%d voltooid</string>
+    <string name="routine_log_clear">Geschiedenis wissen</string>
+    <string name="routine_log_clear_confirm">Alle gelogde sessies voor deze routine wissen?</string>
+    <string name="btn_close">Sluiten</string>
 </resources>

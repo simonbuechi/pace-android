@@ -5,6 +5,8 @@ import ch.simibu.pace.model.Routine
 import ch.simibu.pace.model.SoundScheme
 import ch.simibu.pace.model.TimerPhase
 import ch.simibu.pace.model.TimerState
+import ch.simibu.pace.data.RoutineLogRepository
+import ch.simibu.pace.model.RoutineLogEntry
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +34,8 @@ sealed class TimerEvent {
 
 class TimerEngine(
     private val scope: CoroutineScope = CoroutineScope(Dispatchers.Default),
-    private val dispatcher: CoroutineDispatcher = Dispatchers.Default
+    private val dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    private val routineLogRepository: RoutineLogRepository? = null
 ) {
 
     private val _state = MutableStateFlow(TimerState())
@@ -44,6 +47,8 @@ class TimerEngine(
     private var tickerJob: Job? = null
 
     // Session configuration
+    private var currentRoutineId: String? = null
+    private var sessionTotalDurationSeconds: Int = 0
     private var warmupSeconds: Int = 0
     private var focusSeconds: Int = 45
     private var breakSeconds: Int = 15
@@ -65,6 +70,8 @@ class TimerEngine(
     ) {
         startSession(
             title = routine.name,
+            routineId = routine.id,
+            totalDurationSec = routine.totalDurationSeconds,
             focus = routine.totalFocusSeconds,
             rest = routine.totalBreakSeconds,
             rounds = routine.iterations,
@@ -92,6 +99,8 @@ class TimerEngine(
     ) {
         startSession(
             title = "Quick Session",
+            routineId = null,
+            totalDurationSec = (warmupSec + cooldownSec + ((focusSec + breakSec) * rounds)),
             focus = focusSec,
             rest = breakSec,
             rounds = rounds,
@@ -107,6 +116,8 @@ class TimerEngine(
 
     private fun startSession(
         title: String,
+        routineId: String? = null,
+        totalDurationSec: Int = 0,
         focus: Int,
         rest: Int,
         rounds: Int,
@@ -121,6 +132,8 @@ class TimerEngine(
         tickerJob?.cancel()
 
         sessionTitle = title
+        currentRoutineId = routineId
+        sessionTotalDurationSeconds = if (totalDurationSec > 0) totalDurationSec else (warmup + cooldown + ((focus + rest) * rounds))
         focusSeconds = focus.coerceAtLeast(1)
         breakSeconds = rest.coerceAtLeast(1)
         totalRounds = rounds.coerceAtLeast(1)
@@ -221,6 +234,8 @@ class TimerEngine(
     fun restart() {
         startSession(
             title = sessionTitle,
+            routineId = currentRoutineId,
+            totalDurationSec = sessionTotalDurationSeconds,
             focus = focusSeconds,
             rest = breakSeconds,
             rounds = totalRounds,
@@ -306,5 +321,17 @@ class TimerEngine(
             remainingSecondsInPhase = 0
         )
         _events.tryEmit(TimerEvent.Completed)
+
+        currentRoutineId?.let { rId ->
+            routineLogRepository?.addLog(
+                RoutineLogEntry(
+                    routineId = rId,
+                    routineName = sessionTitle,
+                    timestamp = System.currentTimeMillis(),
+                    durationSeconds = sessionTotalDurationSeconds,
+                    roundsCompleted = totalRounds
+                )
+            )
+        }
     }
 }

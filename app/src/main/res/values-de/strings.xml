@@ -112,4 +112,14 @@
     <string name="notification_action_resume">Fortsetzen</string>
     <string name="notification_action_skip">Überspringen</string>
     <string name="notification_action_stop">Stoppen</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Verlauf anzeigen</string>
+    <string name="routine_log_title">Trainingsverlauf</string>
+    <string name="routine_log_empty">Noch keine Einheiten protokolliert</string>
+    <string name="routine_log_empty_desc">Schließe diese Routine ohne Abbruch ab, um deine Einheiten hier festzuhalten.</string>
+    <string name="routine_log_completed_count">%d abgeschlossen</string>
+    <string name="routine_log_clear">Verlauf löschen</string>
+    <string name="routine_log_clear_confirm">Möchtest du alle Einträge für diese Routine löschen?</string>
+    <string name="btn_close">Schließen</string>
 </resources>

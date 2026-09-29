@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Продолжить</string>
     <string name="notification_action_skip">Пропустить</string>
     <string name="notification_action_stop">Остановить</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Просмотр журнала</string>
+    <string name="routine_log_title">История тренировок</string>
+    <string name="routine_log_empty">Завершений еще нет</string>
+    <string name="routine_log_empty_desc">Завершите тренировку без отмены, чтобы сохранить ее здесь.</string>
+    <string name="routine_log_completed_count">%d завершено</string>
+    <string name="routine_log_clear">Очистить журнал</string>
+    <string name="routine_log_clear_confirm">Очистить все записи для этой тренировки?</string>
+    <string name="btn_close">Закрыть</string>
 </resources>

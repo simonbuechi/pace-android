@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Devam Et</string>
     <string name="notification_action_skip">Geç</string>
     <string name="notification_action_stop">Durdur</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Geçmişi Görüntüle</string>
+    <string name="routine_log_title">Rutin Geçmişi</string>
+    <string name="routine_log_empty">Henüz tamamlanma kaydedilmedi</string>
+    <string name="routine_log_empty_desc">Seanslarınızı buraya kaydetmek için bu rutini iptal etmeden tamamlayın.</string>
+    <string name="routine_log_completed_count">%d tamamlandı</string>
+    <string name="routine_log_clear">Geçmişi Temizle</string>
+    <string name="routine_log_clear_confirm">Bu rutin için tüm tamamlama kayıtları silinsin mi?</string>
+    <string name="btn_close">Kapat</string>
 </resources>

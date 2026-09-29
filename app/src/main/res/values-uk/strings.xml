@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Продовжити</string>
     <string name="notification_action_skip">Пропустити</string>
     <string name="notification_action_stop">Зупинити</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Журнал</string>
+    <string name="routine_log_title">Історія виконання</string>
+    <string name="routine_log_empty">Жодного завершення ще не записано</string>
+    <string name="routine_log_empty_desc">Завершіть цю програму без скасування, щоб зберегти сесію тут.</string>
+    <string name="routine_log_completed_count">%d завершено</string>
+    <string name="routine_log_clear">Очистити журнал</string>
+    <string name="routine_log_clear_confirm">Очистити всю історію для цієї програми?</string>
+    <string name="btn_close">Закрити</string>
 </resources>

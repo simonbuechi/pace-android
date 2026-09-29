@@ -99,4 +99,14 @@
     <string name="notification_action_resume">Nastavi</string>
     <string name="notification_action_skip">Preskoči</string>
     <string name="notification_action_stop">Zaustavi</string>
+
+    <!-- Routine Log -->
+    <string name="routine_view_log">Prikaži povijest</string>
+    <string name="routine_log_title">Povijest rutine</string>
+    <string name="routine_log_empty">Još nema zabilježenih završetaka</string>
+    <string name="routine_log_empty_desc">Dovršite ovu rutinu bez prekidanja kako biste ovdje zabilježili svoje treninge.</string>
+    <string name="routine_log_completed_count">%d dovršeno</string>
+    <string name="routine_log_clear">Očisti povijest</string>
+    <string name="routine_log_clear_confirm">Obrisati sve zapise za ovu rutinu?</string>
+    <string name="btn_close">Zatvori</string>
 </resources>
