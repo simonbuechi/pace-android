@@ -66,26 +66,30 @@ During timer execution, ambient gradients and indicators dynamically tint to con
 
 Located in [`TactileSurface.kt`](file:///d:/dev/antigravity/pace-android/app/src/main/java/ch/simibu/pace/ui/components/TactileSurface.kt).
 
-### 3.1 `TactileCard` (Raised Surface)
+### 3.1 `TactileCard` (Extruded Convex Surface)
 Used for duration pickers, round steppers, routine cards, and settings blocks:
-- **Elevation**: `4.dp` to `6.dp` shadow with dual ambient/spot diffusion.
-- **Bevel Border**: Vertical gradient border with 1.dp stroke:
-  - Top edge: High-alpha white highlight representing overhead light.
-  - Bottom edge: Low-alpha shadow border anchoring the elevation.
+- **135° Convex Surface Gradient**: Directional gradient from specular lit top-left to deeper ambient shade at bottom-right (`Color(0xFFFFFFFF)` to `Color(0xFFE9E4F0)` in Light; `Color(0xFF2B2536)` to `Color(0xFF16131D)` in Dark).
+- **Directional Bevel Border**: 1.5dp stroke with light-catching top-left highlight and anchored bottom-right shadow rim.
+- **Elevation & Diffusion**: `8.dp` to `10.dp` dual ambient & spot shadow with violet-tinted depth.
 - **Corner Radius**: `22.dp` to `24.dp` continuous curvature.
 
-### 3.2 `TactileSunkenWell` (Recessed Surface)
+### 3.2 `TactileSunkenWell` (Debossed Concave Surface)
 Used for wheel picker selection frames, round count badges, phase indicator tags, and progress tracks:
-- **Depth Effect**: Inverted vertical gradient border:
-  - Top edge: Dark shadow border casting downward.
-  - Bottom edge: Light highlight rim catching ambient light from below.
+- **Inverted 135° Concave Gradient**: Darkest cavity at top-left, lifting to faint ambient bounce at bottom-right (`Color(0xFFDFD9E6)` to `Color(0xFFFBF9FC)` in Light; `Color(0xFF100E15)` to `Color(0xFF221D2C)` in Dark).
+- **Inset Cavity Border**: 1.5dp stroke with dark top-left shadow rim and bright bottom-right specular catch-rim.
 - **Corner Radius**: `14.dp` to `18.dp`.
 
-### 3.3 `TactilePillButton` (Interactive Hero Action)
-Used for "Training starten", play/pause toggles, and floating action buttons:
-- **Fill**: `PaceBrandGradient` (`#9123A6` to `#D7195F`).
-- **Glow Shadow**: Colored ambient shadow tinted with `PaceRaspberry.copy(alpha = 0.35f)` and spot shadow tinted with `PaceMagenta.copy(alpha = 0.55f)`.
-- **Elevation**: `8.dp` to `10.dp`.
+### 3.3 `TactilePillButton` (Interactive Hero Action with Press Physics)
+Used for "Start Session", play/pause toggles, and hero actions:
+- **Fill**: `PaceBrandGradient` (`#9123A6` to `#D7195F`) or tactile dome.
+- **Dynamic Spring Press Physics**: When pressed, elevation smoothly animates from `10.dp` down to `2.dp` with a `0.97f` scale punch via `spring(stiffness = Spring.StiffnessMediumLow)`.
+- **Glow Shadow**: Electric ambient glow tinted with `PaceRaspberry` and `PaceMagenta`.
+- **Micro-Bevel**: Two-tone gradient border providing a sharp 3D edge.
+
+### 3.4 `TactileCircleButton` (Extruded Tactile Puck)
+Used for `+` and `-` steppers and circular icon actions:
+- Extruded circular disc with dual-light gradient and spring depress physics.
+- `48.dp` touch-accessible diameter with tactile feedback.
 
 ---
 
