@@ -116,6 +116,7 @@ ch.simibu.pace
 
 ## 📖 Further Documentation
 
+- **[`TESTING.md`](TESTING.md)** — Complete testing architecture, Robolectric setup, Compose UI tests, and CI guidelines.
 - **[`PLAY_STORE.md`](PLAY_STORE.md)** — Complete Google Play Store listing copy (English & German), metadata, character counts, and submission steps.
 - **[`PRIVACY_POLICY.md`](PRIVACY_POLICY.md)** — Comprehensive privacy policy and permission disclosures for store review.
 - **[`DESIGN.md`](DESIGN.md)** — In-depth design specifications, color tokens, layout formulas, and tactile component guidelines.
