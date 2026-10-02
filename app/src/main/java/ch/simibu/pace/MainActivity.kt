@@ -9,8 +9,14 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
@@ -101,7 +107,31 @@ fun PaceAmigoApp(isTimerActive: Boolean) {
 
     AnimatedContent(
         targetState = shouldShowFullscreenTimer,
-        transitionSpec = { fadeIn() togetherWith fadeOut() },
+        transitionSpec = {
+            if (targetState) {
+                // Playful bouncy pop into timer screen
+                (fadeIn(animationSpec = tween(350, easing = FastOutSlowInEasing)) +
+                    scaleIn(
+                        initialScale = 0.85f,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMediumLow
+                        )
+                    )
+                ).togetherWith(
+                    fadeOut(animationSpec = tween(220)) +
+                        scaleOut(targetScale = 1.05f, animationSpec = tween(220))
+                )
+            } else {
+                // Smooth playful scale down on exit
+                (fadeIn(animationSpec = tween(280)) +
+                    scaleIn(initialScale = 1.05f, animationSpec = tween(280))
+                ).togetherWith(
+                    fadeOut(animationSpec = tween(220)) +
+                        scaleOut(targetScale = 0.88f, animationSpec = tween(220))
+                )
+            }
+        },
         label = "screen_transition"
     ) { inTimerScreen ->
         if (inTimerScreen) {

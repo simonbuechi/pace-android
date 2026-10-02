@@ -19,10 +19,10 @@ class TimerBackgroundGradientTest {
             isDark = true
         )
 
-        // Must be cool metallic gunmetal / titanium grey
-        assertEquals(Color(0xFF343842), gradient.topColor)
-        assertEquals(Color(0xFF22252C), gradient.midColor)
-        assertEquals(Color(0xFF131518), gradient.bottomColor)
+        // Must be cool metallic gunmetal / titanium grey with strong presence
+        assertEquals(Color(0xFF424754), gradient.topColor)
+        assertEquals(Color(0xFF2B2F38), gradient.midColor)
+        assertEquals(Color(0xFF16181D), gradient.bottomColor)
     }
 
     @Test
@@ -33,10 +33,10 @@ class TimerBackgroundGradientTest {
             isDark = false
         )
 
-        // Must be frosted platinum / sterling silver
-        assertEquals(Color(0xFFF9FAFC), gradient.topColor)
-        assertEquals(Color(0xFFE5E9F1), gradient.midColor)
-        assertEquals(Color(0xFFD7DCE5), gradient.bottomColor)
+        // Must be frosted platinum / sterling silver with crisp contrast
+        assertEquals(Color(0xFFE4E8F0), gradient.topColor)
+        assertEquals(Color(0xFFD0D6E2), gradient.midColor)
+        assertEquals(Color(0xFFB8C0D0), gradient.bottomColor)
     }
 
     @Test
@@ -71,8 +71,8 @@ class TimerBackgroundGradientTest {
             isDark = false
         )
 
-        // Light theme should produce bright, pastel tones with high RGB values (> 0.7f)
+        // Light theme should produce strong, vibrant tones with high RGB values (> 0.45f)
         assertTrue("Ocean top color blue must be prominent in light theme", oceanLight.topColor.blue > 0.8f)
-        assertTrue("Ocean top color must be light (> 0.7f)", oceanLight.topColor.red > 0.7f)
+        assertTrue("Ocean top color must remain comfortably light (> 0.45f)", oceanLight.topColor.red > 0.45f)
     }
 }

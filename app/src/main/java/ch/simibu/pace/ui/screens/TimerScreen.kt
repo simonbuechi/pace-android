@@ -3,12 +3,25 @@ package ch.simibu.pace.ui.screens
 import android.app.Activity
 import android.view.WindowManager
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
+import androidx.compose.ui.draw.scale
+import ch.simibu.pace.ui.components.ConfettiEffect
+import ch.simibu.pace.ui.components.PhaseRippleEffect
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -169,6 +182,47 @@ fun TimerScreen(
         label = "bg_bottom_color"
     )
 
+    // Playful spring bounce when starting a session and on phase transitions
+    val phaseBounceScale = remember { Animatable(0.86f) }
+    LaunchedEffect(Unit) {
+        // Initial session start entrance bounce
+        phaseBounceScale.animateTo(
+            targetValue = 1f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMediumLow
+            )
+        )
+    }
+
+    LaunchedEffect(timerState.phase) {
+        // Playful elastic bounce between focus, break, warmup, and cooldown
+        phaseBounceScale.snapTo(0.90f)
+        phaseBounceScale.animateTo(
+            targetValue = 1f,
+            animationSpec = spring(
+                dampingRatio = Spring.DampingRatioMediumBouncy,
+                stiffness = Spring.StiffnessMediumLow
+            )
+        )
+    }
+
+    // Playful checkmark pop for completion
+    val checkmarkPopScale = remember { Animatable(0f) }
+    LaunchedEffect(timerState.isCompleted) {
+        if (timerState.isCompleted) {
+            checkmarkPopScale.animateTo(
+                targetValue = 1f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioHighBouncy,
+                    stiffness = Spring.StiffnessMediumLow
+                )
+            )
+        } else {
+            checkmarkPopScale.snapTo(0f)
+        }
+    }
+
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
@@ -198,9 +252,17 @@ fun TimerScreen(
             min(screenWidth - 12.dp, screenHeight * 0.64f)
         }
 
-        // Layer 1: Background Circular Countdown Ring (Soft & Muted)
+        // Layer 0: Playful Phase & Start Ripple Wave
+        PhaseRippleEffect(
+            triggerKey = timerState.phase,
+            color = phaseColor
+        )
+
+        // Layer 1: Background Circular Countdown Ring (Soft & Muted with playful bounce)
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .scale(phaseBounceScale.value),
             contentAlignment = Alignment.Center
         ) {
             CircularTimerRing(
@@ -215,7 +277,7 @@ fun TimerScreen(
             )
         }
 
-        // Layer 2: Center Typography & Information
+        // Layer 2: Center Typography & Information (Scales playfully with phase changes)
         if (isLandscape) {
             // Landscape Top Metadata Bar (Compact so center digits have 100% vertical freedom)
             Row(
@@ -224,16 +286,34 @@ fun TimerScreen(
                     .padding(top = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TactileSunkenWell(
-                    shape = RoundedCornerShape(14.dp)
-                ) {
-                    Text(
-                        text = stringResource(timerState.phase.titleRes).uppercase(),
-                        style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.5.sp),
-                        fontWeight = FontWeight.ExtraBold,
-                        color = phaseColor,
-                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
-                    )
+                AnimatedContent(
+                    targetState = timerState.phase,
+                    transitionSpec = {
+                        (slideInVertically(
+                            initialOffsetY = { -it / 2 },
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        ) + fadeIn() + scaleIn(initialScale = 0.8f, animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)))
+                            .togetherWith(
+                                slideOutVertically(targetOffsetY = { it / 2 }, animationSpec = tween(180)) +
+                                fadeOut(animationSpec = tween(150))
+                            )
+                    },
+                    label = "phase_badge_landscape"
+                ) { targetPhase ->
+                    TactileSunkenWell(
+                        shape = RoundedCornerShape(14.dp)
+                    ) {
+                        Text(
+                            text = stringResource(targetPhase.titleRes).uppercase(),
+                            style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.5.sp),
+                            fontWeight = FontWeight.ExtraBold,
+                            color = phaseColor,
+                            modifier = Modifier.padding(horizontal = 14.dp, vertical = 4.dp)
+                        )
+                    }
                 }
 
                 if (!timerState.isCompleted) {
@@ -258,11 +338,19 @@ fun TimerScreen(
                     .padding(horizontal = 16.dp),
                 contentAlignment = Alignment.Center
             ) {
-                AutoSizingTimerText(
-                    text = if (timerState.isCompleted) "✓" else timerState.formattedRemainingTime,
-                    color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground,
-                    maxFontSize = (screenHeight.value * 0.88f).sp
-                )
+                Box(
+                    modifier = Modifier.then(
+                        if (timerState.isCompleted) Modifier.scale(checkmarkPopScale.value)
+                        else Modifier.scale(phaseBounceScale.value)
+                    ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    AutoSizingTimerText(
+                        text = if (timerState.isCompleted) "✓" else timerState.formattedRemainingTime,
+                        color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground,
+                        maxFontSize = (screenHeight.value * 0.88f).sp
+                    )
+                }
             }
         } else {
             // Portrait Layout: Stacked Phase Badge, Digits & Round Info
@@ -277,26 +365,52 @@ fun TimerScreen(
                         .fillMaxWidth()
                         .padding(horizontal = 12.dp)
                 ) {
-                    // Phase Badge
-                    TactileSunkenWell(
-                        shape = RoundedCornerShape(20.dp),
-                        modifier = Modifier.padding(bottom = 14.dp)
-                    ) {
-                        Text(
-                            text = stringResource(timerState.phase.titleRes).uppercase(),
-                            style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
-                            fontWeight = FontWeight.ExtraBold,
-                            color = phaseColor,
-                            modifier = Modifier.padding(horizontal = 22.dp, vertical = 8.dp)
-                        )
+                    // Phase Badge with playful spring transition
+                    AnimatedContent(
+                        targetState = timerState.phase,
+                        transitionSpec = {
+                            (slideInVertically(
+                                initialOffsetY = { -it / 2 },
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMediumLow
+                                )
+                            ) + fadeIn() + scaleIn(initialScale = 0.8f, animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy)))
+                                .togetherWith(
+                                    slideOutVertically(targetOffsetY = { it / 2 }, animationSpec = tween(180)) +
+                                    fadeOut(animationSpec = tween(150))
+                                )
+                        },
+                        label = "phase_badge_portrait"
+                    ) { targetPhase ->
+                        TactileSunkenWell(
+                            shape = RoundedCornerShape(20.dp),
+                            modifier = Modifier.padding(bottom = 14.dp)
+                        ) {
+                            Text(
+                                text = stringResource(targetPhase.titleRes).uppercase(),
+                                style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp),
+                                fontWeight = FontWeight.ExtraBold,
+                                color = phaseColor,
+                                modifier = Modifier.padding(horizontal = 22.dp, vertical = 8.dp)
+                            )
+                        }
                     }
 
-                    // Giant Countdown Digits filling the screen
-                    AutoSizingTimerText(
-                        text = if (timerState.isCompleted) "✓" else timerState.formattedRemainingTime,
-                        color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground,
-                        maxFontSize = (screenWidth.value * 0.42f).sp
-                    )
+                    // Giant Countdown Digits filling the screen (with playful checkmark pop)
+                    Box(
+                        modifier = Modifier.then(
+                            if (timerState.isCompleted) Modifier.scale(checkmarkPopScale.value)
+                            else Modifier.scale(phaseBounceScale.value)
+                        ),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        AutoSizingTimerText(
+                            text = if (timerState.isCompleted) "✓" else timerState.formattedRemainingTime,
+                            color = if (timerState.isCompleted) PhaseCompletedColor else MaterialTheme.colorScheme.onBackground,
+                            maxFontSize = (screenWidth.value * 0.42f).sp
+                        )
+                    }
 
                     // Round Indicator / Subtitle
                     if (!timerState.isCompleted) {
@@ -488,25 +602,38 @@ fun TimerScreen(
             }
         }
 
-        // Completed State Actions
+        // Completed State Actions with celebratory Confetti & playful slide-up
         if (timerState.isCompleted) {
+            ConfettiEffect(modifier = Modifier.fillMaxSize())
+
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
                     .padding(24.dp)
             ) {
-                CompletedActions(
-                    totalRounds = timerState.totalRounds,
-                    onRestart = {
-                        timerEngine.restart()
-                        PaceTimerService.start(context)
-                    },
-                    onDone = {
-                        PaceTimerService.stop(context)
-                        onExitTimer()
-                    }
-                )
+                AnimatedVisibility(
+                    visible = timerState.isCompleted,
+                    enter = slideInVertically(
+                        initialOffsetY = { it },
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessMediumLow
+                        )
+                    ) + fadeIn(animationSpec = tween(300))
+                ) {
+                    CompletedActions(
+                        totalRounds = timerState.totalRounds,
+                        onRestart = {
+                            timerEngine.restart()
+                            PaceTimerService.start(context)
+                        },
+                        onDone = {
+                            PaceTimerService.stop(context)
+                            onExitTimer()
+                        }
+                    )
+                }
             }
         }
     }
@@ -680,20 +807,20 @@ internal fun getTimerBackgroundGradient(
 ): TimerBackgroundGradient {
     return when (phase) {
         TimerPhase.BREAK -> {
-            // Metallic / silver grey gradient
+            // Metallic / silver grey gradient - distinct, elegant & strong
             if (isDark) {
                 // Brushed gunmetal / liquid titanium
                 TimerBackgroundGradient(
-                    topColor = Color(0xFF343842),
-                    midColor = Color(0xFF22252C),
-                    bottomColor = Color(0xFF131518)
+                    topColor = Color(0xFF424754),
+                    midColor = Color(0xFF2B2F38),
+                    bottomColor = Color(0xFF16181D)
                 )
             } else {
-                // Frosted platinum / polished sterling silver
+                // Frosted platinum / polished sterling silver with crisp contrast
                 TimerBackgroundGradient(
-                    topColor = Color(0xFFF9FAFC),
-                    midColor = Color(0xFFE5E9F1),
-                    bottomColor = Color(0xFFD7DCE5)
+                    topColor = Color(0xFFE4E8F0),
+                    midColor = Color(0xFFD0D6E2),
+                    bottomColor = Color(0xFFB8C0D0)
                 )
             }
         }
@@ -702,15 +829,15 @@ internal fun getTimerBackgroundGradient(
             val warmSecondary = Color(0xFFFFB74D)
             if (isDark) {
                 TimerBackgroundGradient(
-                    topColor = warmPrimary.copy(alpha = 0.34f).compositeOver(Color(0xFF141216)),
-                    midColor = warmSecondary.copy(alpha = 0.22f).compositeOver(Color(0xFF0F0E12)),
-                    bottomColor = warmPrimary.copy(alpha = 0.12f).compositeOver(Color(0xFF0A090D))
+                    topColor = warmPrimary.copy(alpha = 0.62f).compositeOver(Color(0xFF18120E)),
+                    midColor = warmSecondary.copy(alpha = 0.44f).compositeOver(Color(0xFF120E0A)),
+                    bottomColor = warmPrimary.copy(alpha = 0.25f).compositeOver(Color(0xFF0C0907))
                 )
             } else {
                 TimerBackgroundGradient(
-                    topColor = warmPrimary.copy(alpha = 0.24f).compositeOver(Color(0xFFFCFCFD)),
-                    midColor = warmSecondary.copy(alpha = 0.15f).compositeOver(Color(0xFFF7F8FA)),
-                    bottomColor = warmPrimary.copy(alpha = 0.08f).compositeOver(Color(0xFFF0F2F6))
+                    topColor = warmPrimary.copy(alpha = 0.46f).compositeOver(Color(0xFFFFFFFF)),
+                    midColor = warmSecondary.copy(alpha = 0.30f).compositeOver(Color(0xFFFAFBFD)),
+                    bottomColor = warmPrimary.copy(alpha = 0.16f).compositeOver(Color(0xFFF3F5FA))
                 )
             }
         }
@@ -719,15 +846,15 @@ internal fun getTimerBackgroundGradient(
             val coolSecondary = Color(0xFF80DEEA)
             if (isDark) {
                 TimerBackgroundGradient(
-                    topColor = coolPrimary.copy(alpha = 0.34f).compositeOver(Color(0xFF101416)),
-                    midColor = coolSecondary.copy(alpha = 0.22f).compositeOver(Color(0xFF0C1012)),
-                    bottomColor = coolPrimary.copy(alpha = 0.12f).compositeOver(Color(0xFF080B0D))
+                    topColor = coolPrimary.copy(alpha = 0.62f).compositeOver(Color(0xFF0E1618)),
+                    midColor = coolSecondary.copy(alpha = 0.44f).compositeOver(Color(0xFF0A1012)),
+                    bottomColor = coolPrimary.copy(alpha = 0.25f).compositeOver(Color(0xFF060B0D))
                 )
             } else {
                 TimerBackgroundGradient(
-                    topColor = coolPrimary.copy(alpha = 0.24f).compositeOver(Color(0xFFFCFCFD)),
-                    midColor = coolSecondary.copy(alpha = 0.15f).compositeOver(Color(0xFFF7F8FA)),
-                    bottomColor = coolPrimary.copy(alpha = 0.08f).compositeOver(Color(0xFFF0F2F6))
+                    topColor = coolPrimary.copy(alpha = 0.46f).compositeOver(Color(0xFFFFFFFF)),
+                    midColor = coolSecondary.copy(alpha = 0.30f).compositeOver(Color(0xFFFAFBFD)),
+                    bottomColor = coolPrimary.copy(alpha = 0.16f).compositeOver(Color(0xFFF3F5FA))
                 )
             }
         }
@@ -736,33 +863,33 @@ internal fun getTimerBackgroundGradient(
             val compSecondary = Color(0xFF81C784)
             if (isDark) {
                 TimerBackgroundGradient(
-                    topColor = compPrimary.copy(alpha = 0.35f).compositeOver(Color(0xFF101512)),
-                    midColor = compSecondary.copy(alpha = 0.22f).compositeOver(Color(0xFF0C110E)),
-                    bottomColor = compPrimary.copy(alpha = 0.12f).compositeOver(Color(0xFF080D09))
+                    topColor = compPrimary.copy(alpha = 0.66f).compositeOver(Color(0xFF0E1810)),
+                    midColor = compSecondary.copy(alpha = 0.46f).compositeOver(Color(0xFF0A120B)),
+                    bottomColor = compPrimary.copy(alpha = 0.26f).compositeOver(Color(0xFF060D07))
                 )
             } else {
                 TimerBackgroundGradient(
-                    topColor = compPrimary.copy(alpha = 0.24f).compositeOver(Color(0xFFFCFCFD)),
-                    midColor = compSecondary.copy(alpha = 0.15f).compositeOver(Color(0xFFF7F8FA)),
-                    bottomColor = compPrimary.copy(alpha = 0.08f).compositeOver(Color(0xFFF0F2F6))
+                    topColor = compPrimary.copy(alpha = 0.48f).compositeOver(Color(0xFFFFFFFF)),
+                    midColor = compSecondary.copy(alpha = 0.32f).compositeOver(Color(0xFFFAFBFD)),
+                    bottomColor = compPrimary.copy(alpha = 0.18f).compositeOver(Color(0xFFF3F5FA))
                 )
             }
         }
         TimerPhase.FOCUS -> {
-            // Selected color (for routines and quick start) in a rich, muted gradient with optimal contrast
+            // Selected color in a rich, vibrant, high-contrast gradient
             val primary = colorScheme.primaryColor
             val secondary = colorScheme.secondaryColor
             if (isDark) {
                 TimerBackgroundGradient(
-                    topColor = primary.copy(alpha = 0.36f).compositeOver(Color(0xFF141218)),
-                    midColor = secondary.copy(alpha = 0.24f).compositeOver(Color(0xFF0F0E13)),
-                    bottomColor = primary.copy(alpha = 0.14f).compositeOver(Color(0xFF0A090D))
+                    topColor = primary.copy(alpha = 0.66f).compositeOver(Color(0xFF140F19)),
+                    midColor = secondary.copy(alpha = 0.46f).compositeOver(Color(0xFF0F0B13)),
+                    bottomColor = primary.copy(alpha = 0.26f).compositeOver(Color(0xFF0A070E))
                 )
             } else {
                 TimerBackgroundGradient(
-                    topColor = primary.copy(alpha = 0.22f).compositeOver(Color(0xFFFCFCFD)),
-                    midColor = secondary.copy(alpha = 0.14f).compositeOver(Color(0xFFF7F8FA)),
-                    bottomColor = primary.copy(alpha = 0.06f).compositeOver(Color(0xFFF0F2F6))
+                    topColor = primary.copy(alpha = 0.48f).compositeOver(Color(0xFFFFFFFF)),
+                    midColor = secondary.copy(alpha = 0.32f).compositeOver(Color(0xFFFAFBFD)),
+                    bottomColor = primary.copy(alpha = 0.18f).compositeOver(Color(0xFFF3F5FA))
                 )
             }
         }
