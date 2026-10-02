@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Geçmişi Temizle</string>
     <string name="routine_log_clear_confirm">Bu rutin için tüm tamamlama kayıtları silinsin mi?</string>
     <string name="btn_close">Kapat</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Geri Sayım Sinyali</string>
+    <string name="routine_countdown_signal_desc">Odak süresi bitmeden önce her saniye kısa bip sesi</string>
+    <string name="routine_countdown_duration_label">Sinyal Geri Sayım Süresi</string>
+    <string name="routine_countdown_chip">%ds sinyal</string>
 </resources>

@@ -1,8 +1,12 @@
 package ch.simibu.pace
 
 import ch.simibu.pace.engine.TimerEngine
+import ch.simibu.pace.engine.TimerEvent
 import ch.simibu.pace.model.Routine
 import ch.simibu.pace.model.TimerPhase
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -150,5 +154,71 @@ class TimerEngineTest {
         assertEquals(10, routine.totalWarmupSeconds)
         assertEquals(60, routine.totalCooldownSeconds)
         assertEquals(550, routine.totalDurationSeconds)
+    }
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun testCountdownSignalEmittedWhenEnabled() = runTest {
+        val engine = TimerEngine()
+        val routine = Routine(
+            id = "test_signal",
+            name = "Signal Test",
+            focusMinutes = 0,
+            focusSeconds = 10,
+            breakMinutes = 0,
+            breakSeconds = 0,
+            iterations = 1,
+            countdownSignalEnabled = true,
+            countdownSignalSeconds = 5
+        )
+        val collected = mutableListOf<TimerEvent>()
+        val job = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            engine.events.collect { collected.add(it) }
+        }
+        engine.startRoutine(routine)
+
+        // 4 ticks: remaining decreases from 10 down to 6 -> no countdown tick yet
+        repeat(4) { engine.performTick() }
+        assertTrue(collected.none { it is TimerEvent.CountdownTick })
+
+        // 5th tick: remaining is 5 -> CountdownTick(5) emitted
+        engine.performTick()
+        val ticks5 = collected.filterIsInstance<TimerEvent.CountdownTick>()
+        assertEquals(1, ticks5.size)
+        assertEquals(5, ticks5.first().secondsLeft)
+
+        // Remaining 4, 3, 2, 1 -> 4 more ticks
+        repeat(4) { engine.performTick() }
+        val allTicks = collected.filterIsInstance<TimerEvent.CountdownTick>()
+        assertEquals(5, allTicks.size)
+        assertEquals(listOf(5, 4, 3, 2, 1), allTicks.map { it.secondsLeft })
+        job.cancel()
+    }
+
+    @OptIn(kotlinx.coroutines.ExperimentalCoroutinesApi::class)
+    @Test
+    fun testCountdownSignalSuppressedWhenDisabled() = runTest {
+        val engine = TimerEngine()
+        val routine = Routine(
+            id = "test_disabled",
+            name = "Disabled Test",
+            focusMinutes = 0,
+            focusSeconds = 6,
+            breakMinutes = 0,
+            breakSeconds = 0,
+            iterations = 1,
+            countdownSignalEnabled = false,
+            countdownSignalSeconds = 5
+        )
+        val collected = mutableListOf<TimerEvent>()
+        val job = backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            engine.events.collect { collected.add(it) }
+        }
+        engine.startRoutine(routine)
+
+        // Tick down through 5..1
+        repeat(5) { engine.performTick() }
+        assertTrue(collected.none { it is TimerEvent.CountdownTick })
+        job.cancel()
     }
 }

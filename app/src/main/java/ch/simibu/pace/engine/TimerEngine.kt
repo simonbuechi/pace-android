@@ -59,6 +59,8 @@ class TimerEngine(
     private var currentBreakSoundScheme: SoundScheme = SoundScheme.CHIME
     private var currentBreakSoundRepeats: Int = 1
     private var currentColorScheme: ColorSchemeOption = ColorSchemeOption.PACE
+    private var currentCountdownSignalEnabled: Boolean = true
+    private var currentCountdownSignalSeconds: Int = 3
     private var sessionTitle: String = ""
 
     fun startRoutine(
@@ -81,7 +83,9 @@ class TimerEngine(
             focusRepeats = focusRepeats,
             breakSound = breakSound,
             breakRepeats = breakRepeats,
-            color = routine.colorScheme
+            color = routine.colorScheme,
+            countdownSignalEnabled = routine.countdownSignalEnabled,
+            countdownSignalSeconds = routine.countdownSignalSeconds
         )
     }
 
@@ -127,13 +131,17 @@ class TimerEngine(
         focusRepeats: Int = 1,
         breakSound: SoundScheme,
         breakRepeats: Int = 1,
-        color: ColorSchemeOption
+        color: ColorSchemeOption,
+        countdownSignalEnabled: Boolean = true,
+        countdownSignalSeconds: Int = 3
     ) {
         tickerJob?.cancel()
 
         sessionTitle = title
         currentRoutineId = routineId
         sessionTotalDurationSeconds = if (totalDurationSec > 0) totalDurationSec else (warmup + cooldown + ((focus + rest) * rounds))
+        currentCountdownSignalEnabled = countdownSignalEnabled
+        currentCountdownSignalSeconds = countdownSignalSeconds
         focusSeconds = focus.coerceAtLeast(1)
         breakSeconds = rest.coerceAtLeast(1)
         totalRounds = rounds.coerceAtLeast(1)
@@ -188,7 +196,13 @@ class TimerEngine(
 
         val remaining = current.remainingSecondsInPhase - 1
 
-        if (remaining in 1..3) {
+        val shouldEmitCountdown = when (current.phase) {
+            TimerPhase.FOCUS -> currentCountdownSignalEnabled && remaining in 1..currentCountdownSignalSeconds
+            TimerPhase.WARMUP, TimerPhase.BREAK, TimerPhase.COOLDOWN -> remaining in 1..3
+            TimerPhase.COMPLETED -> false
+        }
+
+        if (shouldEmitCountdown) {
             _events.tryEmit(TimerEvent.CountdownTick(remaining))
         }
 
@@ -245,7 +259,9 @@ class TimerEngine(
             focusRepeats = currentFocusSoundRepeats,
             breakSound = currentBreakSoundScheme,
             breakRepeats = currentBreakSoundRepeats,
-            color = currentColorScheme
+            color = currentColorScheme,
+            countdownSignalEnabled = currentCountdownSignalEnabled,
+            countdownSignalSeconds = currentCountdownSignalSeconds
         )
     }
 

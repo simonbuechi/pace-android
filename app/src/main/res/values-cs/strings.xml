@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Vymazat historii</string>
     <string name="routine_log_clear_confirm">Vymazat všechny záznamy pro tuto rutinu?</string>
     <string name="btn_close">Zavřít</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Signál odpočítávání</string>
+    <string name="routine_countdown_signal_desc">Krátké pípnutí každou sekundu před koncem fáze soustředění</string>
+    <string name="routine_countdown_duration_label">Délka signálu odpočítávání</string>
+    <string name="routine_countdown_chip">%ds signál</string>
 </resources>

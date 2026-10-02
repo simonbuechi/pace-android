@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Borrar historial</string>
     <string name="routine_log_clear_confirm">¿Borrar todos los registros de esta rutina?</string>
     <string name="btn_close">Cerrar</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Señal de cuenta atrás</string>
+    <string name="routine_countdown_signal_desc">Pitido corto cada segundo antes de que termine el foco</string>
+    <string name="routine_countdown_duration_label">Duración de la señal de cuenta atrás</string>
+    <string name="routine_countdown_chip">%ds señal</string>
 </resources>

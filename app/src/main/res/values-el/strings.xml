@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Εκκαθάριση ιστορικού</string>
     <string name="routine_log_clear_confirm">Εκκαθάριση όλων των καταγραφών για αυτή τη ρουτίνα;</string>
     <string name="btn_close">Κλείσιμο</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Σήμα αντίστροφης μέτρησης</string>
+    <string name="routine_countdown_signal_desc">Σύντομο μπιπ κάθε δευτερόλεπτο πριν λήξει η εστίαση</string>
+    <string name="routine_countdown_duration_label">Διάρκεια σήματος αντίστροφης μέτρησης</string>
+    <string name="routine_countdown_chip">%dδ σήμα</string>
 </resources>

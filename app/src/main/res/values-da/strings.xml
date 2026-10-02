@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Ryd historik</string>
     <string name="routine_log_clear_confirm">Ryd alle logfiler for denne rutine?</string>
     <string name="btn_close">Luk</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Nedtællingssignal</string>
+    <string name="routine_countdown_signal_desc">Kort biplyd hvert sekund inden fokusfasen slutter</string>
+    <string name="routine_countdown_duration_label">Varighed af nedtællingssignal</string>
+    <string name="routine_countdown_chip">%ds signal</string>
 </resources>

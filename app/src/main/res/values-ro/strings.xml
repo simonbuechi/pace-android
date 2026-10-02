@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Șterge istoricul</string>
     <string name="routine_log_clear_confirm">Ștergi toate înregistrările pentru această rutină?</string>
     <string name="btn_close">Închide</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Semnal de numărătoare inversă</string>
+    <string name="routine_countdown_signal_desc">Semnal sonor scurt în fiecare secundă înainte de terminarea concentrării</string>
+    <string name="routine_countdown_duration_label">Durata semnalului de numărătoare inversă</string>
+    <string name="routine_countdown_chip">%ds semnal</string>
 </resources>

@@ -122,4 +122,10 @@
     <string name="routine_log_clear">Verlauf löschen</string>
     <string name="routine_log_clear_confirm">Möchtest du alle Einträge für diese Routine löschen?</string>
     <string name="btn_close">Schließen</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Countdown-Signal</string>
+    <string name="routine_countdown_signal_desc">Kurzer Piepton jede Sekunde vor Ende der Fokusphase</string>
+    <string name="routine_countdown_duration_label">Signaldauer des Countdowns</string>
+    <string name="routine_countdown_chip">%ds Signal</string>
 </resources>

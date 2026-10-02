@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Очистить журнал</string>
     <string name="routine_log_clear_confirm">Очистить все записи для этой тренировки?</string>
     <string name="btn_close">Закрыть</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Сигнал обратного отсчета</string>
+    <string name="routine_countdown_signal_desc">Короткий звуковой сигнал каждую секунду до окончания фокуса</string>
+    <string name="routine_countdown_duration_label">Длительность сигнала отсчета</string>
+    <string name="routine_countdown_chip">%dс сигнал</string>
 </resources>

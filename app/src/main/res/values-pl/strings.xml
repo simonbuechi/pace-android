@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Wyczyść historię</string>
     <string name="routine_log_clear_confirm">Wyczyścić całą historię dla tej rutyny?</string>
     <string name="btn_close">Zamknij</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Sygnał odliczania</string>
+    <string name="routine_countdown_signal_desc">Krótki sygnał co sekundę przed końcem fazy skupienia</string>
+    <string name="routine_countdown_duration_label">Czas trwania sygnału odliczania</string>
+    <string name="routine_countdown_chip">%ds sygnał</string>
 </resources>

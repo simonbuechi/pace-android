@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Rensa historik</string>
     <string name="routine_log_clear_confirm">Rensa alla loggar för denna rutin?</string>
     <string name="btn_close">Stäng</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Nedräkningssignal</string>
+    <string name="routine_countdown_signal_desc">Kort pip varje sekund innan fokusfasen tar slut</string>
+    <string name="routine_countdown_duration_label">Varaktighet för nedräkningssignal</string>
+    <string name="routine_countdown_chip">%ds signal</string>
 </resources>

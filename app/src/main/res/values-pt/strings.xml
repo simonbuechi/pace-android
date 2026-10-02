@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Limpar histórico</string>
     <string name="routine_log_clear_confirm">Limpar todos os registos desta rotina?</string>
     <string name="btn_close">Fechar</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Sinal de contagem regressiva</string>
+    <string name="routine_countdown_signal_desc">Bip curto a cada segundo antes do fim da fase de foco</string>
+    <string name="routine_countdown_duration_label">Duração do sinal de contagem regressiva</string>
+    <string name="routine_countdown_chip">%ds sinal</string>
 </resources>

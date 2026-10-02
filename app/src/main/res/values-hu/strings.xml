@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Napló törlése</string>
     <string name="routine_log_clear_confirm">Törli a rutinhoz tartozó összes befejezési naplót?</string>
     <string name="btn_close">Bezárás</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Visszaszámláló jelzés</string>
+    <string name="routine_countdown_signal_desc">Rövid sípolás másodpercenként a fókuszfázis vége előtt</string>
+    <string name="routine_countdown_duration_label">Jelzés visszaszámlálásának időtartama</string>
+    <string name="routine_countdown_chip">%d mp jel</string>
 </resources>

@@ -17,7 +17,9 @@ data class Routine(
     val cooldownMinutes: Int = 0,
     val cooldownSeconds: Int = 0,
     val soundSchemeId: String = SoundScheme.BEEP.id,
-    val colorSchemeId: String = ColorSchemeOption.PACE.id
+    val colorSchemeId: String = ColorSchemeOption.PACE.id,
+    val countdownSignalEnabled: Boolean = true,
+    val countdownSignalSeconds: Int = 3
 ) {
     val totalFocusSeconds: Int
         get() = (focusMinutes * 60) + focusSeconds
@@ -41,6 +43,8 @@ data class Routine(
         get() = ColorSchemeOption.fromId(colorSchemeId)
 
     companion object {
+        val COUNTDOWN_SIGNAL_OPTIONS = listOf(3, 5, 10, 20, 30, 60)
+
         fun createDefaultPresets(): List<Routine> = listOf(
             Routine(
                 id = "preset_tabata",

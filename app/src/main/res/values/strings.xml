@@ -122,4 +122,10 @@
     <string name="routine_log_clear">Clear History</string>
     <string name="routine_log_clear_confirm">Clear all completion logs for this routine?</string>
     <string name="btn_close">Close</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Countdown Signal</string>
+    <string name="routine_countdown_signal_desc">Short beep every second before focus phase ends</string>
+    <string name="routine_countdown_duration_label">Signal Countdown Duration</string>
+    <string name="routine_countdown_chip">%ds signal</string>
 </resources>

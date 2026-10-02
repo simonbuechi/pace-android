@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Tøm logg</string>
     <string name="routine_log_clear_confirm">Slette alle logger for denne rutinen?</string>
     <string name="btn_close">Lukk</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Nedtellingssignal</string>
+    <string name="routine_countdown_signal_desc">Kort pip hvert sekund før fokusfasen avsluttes</string>
+    <string name="routine_countdown_duration_label">Varighet for nedtellingssignal</string>
+    <string name="routine_countdown_chip">%ds signal</string>
 </resources>

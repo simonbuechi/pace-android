@@ -109,4 +109,10 @@
     <string name="routine_log_clear">Cancella cronologia</string>
     <string name="routine_log_clear_confirm">Cancellare tutti i record di questa routine?</string>
     <string name="btn_close">Chiudi</string>
+
+    <!-- Countdown Signal -->
+    <string name="routine_countdown_signal_label">Segnale di conto alla rovescia</string>
+    <string name="routine_countdown_signal_desc">Breve segnale acustico ogni secondo prima del termine del focus</string>
+    <string name="routine_countdown_duration_label">Durata del segnale di conto alla rovescia</string>
+    <string name="routine_countdown_chip">%ds segnale</string>
 </resources>

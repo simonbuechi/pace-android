@@ -325,8 +325,8 @@ fun RoutineCard(
                 )
             }
 
-            // Optional Warm-up & Cool-down line (Subtle and quiet)
-            if (routine.totalWarmupSeconds > 0 || routine.totalCooldownSeconds > 0) {
+            // Optional Warm-up, Cool-down & Countdown Signal line (Subtle and quiet)
+            if (routine.totalWarmupSeconds > 0 || routine.totalCooldownSeconds > 0 || routine.countdownSignalEnabled) {
                 Spacer(modifier = Modifier.height(4.dp))
                 val warmupPart = if (routine.totalWarmupSeconds > 0) {
                     val wStr = if (routine.warmupMinutes > 0 && routine.warmupSeconds > 0) "${routine.warmupMinutes}m ${routine.warmupSeconds}s"
@@ -342,7 +342,11 @@ fun RoutineCard(
                     "+ $cStr " + stringResource(R.string.timer_phase_cooldown)
                 } else null
 
-                val extraText = listOfNotNull(warmupPart, cooldownPart).joinToString("   •   ")
+                val signalPart = if (routine.countdownSignalEnabled) {
+                    stringResource(R.string.routine_countdown_chip, routine.countdownSignalSeconds)
+                } else null
+
+                val extraText = listOfNotNull(warmupPart, cooldownPart, signalPart).joinToString("   •   ")
 
                 Text(
                     text = extraText,

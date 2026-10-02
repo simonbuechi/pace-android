@@ -57,7 +57,9 @@ import ch.simibu.pace.R
 import ch.simibu.pace.model.ColorSchemeOption
 import ch.simibu.pace.model.Routine
 import ch.simibu.pace.model.SoundScheme
+import ch.simibu.pace.ui.components.TactileSunkenWell
 import ch.simibu.pace.ui.components.TimeDurationWheelPicker
+import ch.simibu.pace.ui.theme.PaceBrandGradient
 import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -99,6 +101,10 @@ fun RoutineEditorDialog(
     var cooldownSec by remember {
         mutableIntStateOf(if (initialCooldownTotal > 0) initialCooldownTotal % 60 else 0)
     }
+
+    // Countdown signal configuration
+    var countdownSignalEnabled by remember { mutableStateOf(initialRoutine?.countdownSignalEnabled ?: true) }
+    var countdownSignalSeconds by remember { mutableIntStateOf(initialRoutine?.countdownSignalSeconds ?: 3) }
 
     var selectedSound by remember { mutableStateOf(initialRoutine?.soundScheme ?: SoundScheme.BEEP) }
     var selectedColor by remember { mutableStateOf(initialRoutine?.colorScheme ?: ColorSchemeOption.PACE) }
@@ -294,6 +300,110 @@ fun RoutineEditorDialog(
                     }
                 }
 
+                // Countdown Signal Configuration (Yes/No + duration selector)
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = stringResource(R.string.routine_countdown_signal_label),
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                            Text(
+                                text = stringResource(R.string.routine_countdown_signal_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
+                        Switch(
+                            checked = countdownSignalEnabled,
+                            onCheckedChange = { countdownSignalEnabled = it }
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = countdownSignalEnabled,
+                        enter = fadeIn() + expandVertically(),
+                        exit = fadeOut() + shrinkVertically()
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = stringResource(R.string.routine_countdown_duration_label),
+                                style = MaterialTheme.typography.labelMedium,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                listOf(3, 5, 10).forEach { sec ->
+                                    val isSelected = countdownSignalSeconds == sec
+                                    TactileSunkenWell(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable { countdownSignalSeconds = sec },
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .then(if (isSelected) Modifier.background(PaceBrandGradient) else Modifier)
+                                                .padding(vertical = 10.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "${sec}s",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                listOf(20, 30, 60).forEach { sec ->
+                                    val isSelected = countdownSignalSeconds == sec
+                                    TactileSunkenWell(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable { countdownSignalSeconds = sec },
+                                        shape = RoundedCornerShape(12.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .then(if (isSelected) Modifier.background(PaceBrandGradient) else Modifier)
+                                                .padding(vertical = 10.dp),
+                                            contentAlignment = Alignment.Center
+                                        ) {
+                                            Text(
+                                                text = "${sec}s",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 // Sound Scheme Dropdown
                 ExposedDropdownMenuBox(
                     expanded = soundDropdownExpanded,
@@ -384,7 +494,9 @@ fun RoutineEditorDialog(
                         cooldownMinutes = if (cooldownEnabled) cooldownMin else 0,
                         cooldownSeconds = if (cooldownEnabled) cooldownSec else 0,
                         soundSchemeId = selectedSound.id,
-                        colorSchemeId = selectedColor.id
+                        colorSchemeId = selectedColor.id,
+                        countdownSignalEnabled = countdownSignalEnabled,
+                        countdownSignalSeconds = countdownSignalSeconds
                     )
                     onSave(routine)
                 }
