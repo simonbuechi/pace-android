@@ -139,4 +139,6 @@
     <string name="setting_about_title">À propos</string>
     <string name="setting_about_creator">Créé par Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Site du projet</string>
+    <string name="routine_details_title">Détails de la routine</string>
+    <string name="routine_total_duration">Durée totale</string>
 </resources>

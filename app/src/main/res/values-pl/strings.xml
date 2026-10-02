@@ -139,4 +139,6 @@
     <string name="setting_about_title">O aplikacji</string>
     <string name="setting_about_creator">Stworzone przez Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Strona projektu</string>
+    <string name="routine_details_title">Szczegóły rutyny</string>
+    <string name="routine_total_duration">Całkowity czas</string>
 </resources>

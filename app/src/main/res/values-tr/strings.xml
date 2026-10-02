@@ -139,4 +139,6 @@
     <string name="setting_about_title">Hakkında</string>
     <string name="setting_about_creator">Simon Büchi tarafından oluşturuldu © 2026</string>
     <string name="setting_about_project_site">Proje Web Sitesi</string>
+    <string name="routine_details_title">Rutin Detayları</string>
+    <string name="routine_total_duration">Toplam Süre</string>
 </resources>

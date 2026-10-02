@@ -139,4 +139,6 @@
     <string name="setting_about_title">О приложении</string>
     <string name="setting_about_creator">Создано Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Сайт проекта</string>
+    <string name="routine_details_title">Детали программы</string>
+    <string name="routine_total_duration">Общая длительность</string>
 </resources>

@@ -139,4 +139,6 @@
     <string name="setting_about_title">Névjegy</string>
     <string name="setting_about_creator">Készítette: Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Projekt weboldala</string>
+    <string name="routine_details_title">Rutin részletei</string>
+    <string name="routine_total_duration">Teljes időtartam</string>
 </resources>

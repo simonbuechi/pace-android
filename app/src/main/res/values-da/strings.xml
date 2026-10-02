@@ -139,4 +139,6 @@
     <string name="setting_about_title">Om</string>
     <string name="setting_about_creator">Lavet af Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Projektwebsted</string>
+    <string name="routine_details_title">Rutinedetaljer</string>
+    <string name="routine_total_duration">Samlet varighed</string>
 </resources>

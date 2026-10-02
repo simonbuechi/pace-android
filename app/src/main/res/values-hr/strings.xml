@@ -139,4 +139,6 @@
     <string name="setting_about_title">O aplikaciji</string>
     <string name="setting_about_creator">Izradio Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Web stranica projekta</string>
+    <string name="routine_details_title">Pojedinosti rutine</string>
+    <string name="routine_total_duration">Ukupno trajanje</string>
 </resources>

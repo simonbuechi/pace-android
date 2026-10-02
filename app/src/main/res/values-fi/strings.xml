@@ -139,4 +139,6 @@
     <string name="setting_about_title">Tietoja</string>
     <string name="setting_about_creator">Tekijä: Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Projektin verkkosivusto</string>
+    <string name="routine_details_title">Rutiinin tiedot</string>
+    <string name="routine_total_duration">Kokonaiskesto</string>
 </resources>

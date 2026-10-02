@@ -152,4 +152,6 @@
     <string name="setting_about_title">Über die App</string>
     <string name="setting_about_creator">Erstellt von Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Projekt-Webseite</string>
+    <string name="routine_details_title">Routine-Details</string>
+    <string name="routine_total_duration">Gesamtdauer</string>
 </resources>

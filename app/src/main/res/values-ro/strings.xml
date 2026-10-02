@@ -139,4 +139,6 @@
     <string name="setting_about_title">Despre</string>
     <string name="setting_about_creator">Creat de Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Site-ul proiectului</string>
+    <string name="routine_details_title">Detalii rutină</string>
+    <string name="routine_total_duration">Durată totală</string>
 </resources>

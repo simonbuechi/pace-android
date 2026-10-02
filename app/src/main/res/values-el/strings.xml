@@ -139,4 +139,6 @@
     <string name="setting_about_title">Σχετικά</string>
     <string name="setting_about_creator">Δημιουργήθηκε από τον Simon Büchi © 2026</string>
     <string name="setting_about_project_site">Ιστότοπος έργου</string>
+    <string name="routine_details_title">Λεπτομέρειες ρουτίνας</string>
+    <string name="routine_total_duration">Συνολική διάρκεια</string>
 </resources>
