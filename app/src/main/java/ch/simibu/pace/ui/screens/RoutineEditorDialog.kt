@@ -54,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ch.simibu.pace.R
+import ch.simibu.pace.model.BackgroundAnimationOption
 import ch.simibu.pace.model.ColorSchemeOption
 import ch.simibu.pace.model.Routine
 import ch.simibu.pace.model.SoundScheme
@@ -108,8 +109,12 @@ fun RoutineEditorDialog(
 
     var selectedSound by remember { mutableStateOf(initialRoutine?.soundScheme ?: SoundScheme.BEEP) }
     var selectedColor by remember { mutableStateOf(initialRoutine?.colorScheme ?: ColorSchemeOption.PACE) }
+    var selectedAnimation by remember {
+        mutableStateOf(initialRoutine?.backgroundAnimation ?: BackgroundAnimationOption.APP_DEFAULT)
+    }
 
     var soundDropdownExpanded by remember { mutableStateOf(false) }
+    var animationDropdownExpanded by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
     AlertDialog(
@@ -475,6 +480,51 @@ fun RoutineEditorDialog(
                         }
                     }
                 }
+
+                // Background Animation Selection
+                ExposedDropdownMenuBox(
+                    expanded = animationDropdownExpanded,
+                    onExpandedChange = { animationDropdownExpanded = it }
+                ) {
+                    OutlinedTextField(
+                        value = stringResource(selectedAnimation.titleRes),
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text(stringResource(R.string.routine_bg_animation_label)) },
+                        supportingText = { Text(stringResource(selectedAnimation.descRes)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = animationDropdownExpanded) },
+                        modifier = Modifier
+                            .menuAnchor(androidx.compose.material3.MenuAnchorType.PrimaryNotEditable, true)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    ExposedDropdownMenu(
+                        expanded = animationDropdownExpanded,
+                        onDismissRequest = { animationDropdownExpanded = false }
+                    ) {
+                        BackgroundAnimationOption.ROUTINE_OPTIONS.forEach { option ->
+                            DropdownMenuItem(
+                                text = {
+                                    Column {
+                                        Text(
+                                            text = stringResource(option.titleRes),
+                                            fontWeight = if (selectedAnimation == option) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                        Text(
+                                            text = stringResource(option.descRes),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    selectedAnimation = option
+                                    animationDropdownExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
             }
         },
         confirmButton = {
@@ -496,7 +546,8 @@ fun RoutineEditorDialog(
                         soundSchemeId = selectedSound.id,
                         colorSchemeId = selectedColor.id,
                         countdownSignalEnabled = countdownSignalEnabled,
-                        countdownSignalSeconds = countdownSignalSeconds
+                        countdownSignalSeconds = countdownSignalSeconds,
+                        backgroundAnimationId = selectedAnimation.id
                     )
                     onSave(routine)
                 }

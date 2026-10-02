@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Korte piep elke seconde voor het einde van de focusfase</string>
     <string name="routine_countdown_duration_label">Duur aftelsignaal</string>
     <string name="routine_countdown_chip">%ds signaal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Timer achtergrondanimatie</string>
+    <string name="setting_bg_animation_desc">Kies een subtiele visuele beweging voor de achtergrond</string>
+    <string name="routine_bg_animation_label">Achtergrondanimatie</string>
+    <string name="bg_anim_app_default">App-standaard gebruiken</string>
+    <string name="bg_anim_app_default_desc">Volgt de algemene achtergrondanimatie-instelling</string>
+    <string name="bg_anim_breathing_aura">Ademende aura</string>
+    <string name="bg_anim_breathing_aura_desc">Rustige sinusoïdale radiale puls</string>
+    <string name="bg_anim_aurora_flow">Aurora-stroom</string>
+    <string name="bg_anim_aurora_flow_desc">Vloeiende lichte kleurgolven</string>
+    <string name="bg_anim_horizon_glow">Horizon-gloed</string>
+    <string name="bg_anim_horizon_glow_desc">Lichtgloed stijgt naarmate de tijd verstrijkt</string>
+    <string name="bg_anim_metallic_sheen">Metalen glans</string>
+    <string name="bg_anim_metallic_sheen_desc">Diagonale glansveeg</string>
+    <string name="bg_anim_sensor_parallax">Sensor-parallax</string>
+    <string name="bg_anim_sensor_parallax_desc">Reageert interactief op het kantelen van het toestel</string>
+    <string name="bg_anim_none">Geen (Statisch)</string>
+    <string name="bg_anim_none_desc">Strakke kleurovergang zonder beweging</string>
 </resources>

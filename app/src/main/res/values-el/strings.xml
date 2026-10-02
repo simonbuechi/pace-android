@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Σύντομο μπιπ κάθε δευτερόλεπτο πριν λήξει η εστίαση</string>
     <string name="routine_countdown_duration_label">Διάρκεια σήματος αντίστροφης μέτρησης</string>
     <string name="routine_countdown_chip">%dδ σήμα</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Κίνηση φόντου χρονοδιακόπτη</string>
+    <string name="setting_bg_animation_desc">Επιλέξτε μια διακριτική οπτική κίνηση για το φόντο του χρονοδιακόπτη</string>
+    <string name="routine_bg_animation_label">Κίνηση φόντου</string>
+    <string name="bg_anim_app_default">Προεπιλογή εφαρμογής</string>
+    <string name="bg_anim_app_default_desc">Κληρονόμηση γενικής ρύθμισης κίνησης φόντου</string>
+    <string name="bg_anim_breathing_aura">Αύρα αναπνοής</string>
+    <string name="bg_anim_breathing_aura_desc">Ήρεμος ημιτονοειδής ακτινικός παλμός</string>
+    <string name="bg_anim_aurora_flow">Ροή σέλαος</string>
+    <string name="bg_anim_aurora_flow_desc">Απαλά κύματα φωτός στο φόντο</string>
+    <string name="bg_anim_horizon_glow">Λάμψη ορίζοντα</string>
+    <string name="bg_anim_horizon_glow_desc">Το φως αναδύεται καθώς περνά ο χρόνος</string>
+    <string name="bg_anim_metallic_sheen">Μεταλλική λάμψη</string>
+    <string name="bg_anim_metallic_sheen_desc">Διαγώνια αντανάκλαση φωτός</string>
+    <string name="bg_anim_sensor_parallax">Παράλλαξη αισθητήρα</string>
+    <string name="bg_anim_sensor_parallax_desc">Διαδραστική απόκριση στην κλίση της συσκευής</string>
+    <string name="bg_anim_none">Καμία (Στατικό)</string>
+    <string name="bg_anim_none_desc">Καθαρή διαβάθμιση χωρίς κίνηση</string>
 </resources>

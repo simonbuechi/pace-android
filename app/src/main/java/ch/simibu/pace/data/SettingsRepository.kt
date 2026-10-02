@@ -1,6 +1,7 @@
 package ch.simibu.pace.data
 
 import android.content.Context
+import ch.simibu.pace.model.BackgroundAnimationOption
 import ch.simibu.pace.model.SoundScheme
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,13 @@ class SettingsRepository(context: Context) {
 
     private val _themeMode = MutableStateFlow(prefs.getString(KEY_THEME_MODE, THEME_SYSTEM) ?: THEME_SYSTEM)
     val themeMode: StateFlow<String> = _themeMode.asStateFlow()
+
+    private val _backgroundAnimation = MutableStateFlow(
+        BackgroundAnimationOption.fromId(
+            prefs.getString(KEY_BG_ANIMATION, BackgroundAnimationOption.BREATHING_AURA.id)
+        )
+    )
+    val backgroundAnimation: StateFlow<BackgroundAnimationOption> = _backgroundAnimation.asStateFlow()
 
     private val _soundEnabled = MutableStateFlow(prefs.getBoolean(KEY_SOUND_ENABLED, true))
     val soundEnabled: StateFlow<Boolean> = _soundEnabled.asStateFlow()
@@ -122,6 +130,11 @@ class SettingsRepository(context: Context) {
         _screenAwake.value = awake
     }
 
+    fun setBackgroundAnimation(option: BackgroundAnimationOption) {
+        prefs.edit().putString(KEY_BG_ANIMATION, option.id).apply()
+        _backgroundAnimation.value = option
+    }
+
     companion object {
         private const val PREFS_NAME = "pace_amigo_settings"
         const val THEME_SYSTEM = "system"
@@ -129,6 +142,7 @@ class SettingsRepository(context: Context) {
         const val THEME_DARK = "dark"
 
         private const val KEY_THEME_MODE = "theme_mode"
+        private const val KEY_BG_ANIMATION = "background_animation"
         private const val KEY_SOUND_ENABLED = "sound_enabled"
         private const val KEY_FOCUS_SOUND = "focus_sound"
         private const val KEY_FOCUS_SOUND_REPEATS = "focus_sound_repeats"

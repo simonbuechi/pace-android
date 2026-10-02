@@ -79,9 +79,11 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import ch.simibu.pace.PaceApplication
 import ch.simibu.pace.R
+import ch.simibu.pace.model.BackgroundAnimationOption
 import ch.simibu.pace.model.ColorSchemeOption
 import ch.simibu.pace.model.TimerPhase
 import ch.simibu.pace.service.PaceTimerService
+import ch.simibu.pace.ui.components.AnimatedTimerBackground
 import ch.simibu.pace.ui.components.CircularTimerRing
 import ch.simibu.pace.ui.components.TactileCard
 import ch.simibu.pace.ui.components.TactilePillButton
@@ -106,6 +108,13 @@ fun TimerScreen(
 
     val timerState by timerEngine.state.collectAsState()
     val screenAwake by settingsRepo.screenAwake.collectAsState()
+    val globalAnimation by settingsRepo.backgroundAnimation.collectAsState()
+
+    val effectiveAnimation = if (timerState.backgroundAnimation != BackgroundAnimationOption.APP_DEFAULT) {
+        timerState.backgroundAnimation
+    } else {
+        globalAnimation
+    }
 
     var showExitDialog by remember { mutableStateOf(false) }
 
@@ -158,30 +167,6 @@ fun TimerScreen(
         TimerPhase.COMPLETED -> PhaseCompletedColor
     }
 
-    val targetGradient = remember(timerState.phase, timerState.colorScheme, isDark) {
-        getTimerBackgroundGradient(
-            phase = timerState.phase,
-            colorScheme = timerState.colorScheme,
-            isDark = isDark
-        )
-    }
-
-    val animatedTopColor by animateColorAsState(
-        targetValue = targetGradient.topColor,
-        animationSpec = tween(600),
-        label = "bg_top_color"
-    )
-    val animatedMidColor by animateColorAsState(
-        targetValue = targetGradient.midColor,
-        animationSpec = tween(600),
-        label = "bg_mid_color"
-    )
-    val animatedBottomColor by animateColorAsState(
-        targetValue = targetGradient.bottomColor,
-        animationSpec = tween(600),
-        label = "bg_bottom_color"
-    )
-
     // Playful spring bounce when starting a session and on phase transitions
     val phaseBounceScale = remember { Animatable(0.86f) }
     LaunchedEffect(Unit) {
@@ -226,13 +211,6 @@ fun TimerScreen(
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    0.0f to animatedTopColor,
-                    0.55f to animatedMidColor,
-                    1.0f to animatedBottomColor
-                )
-            )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
@@ -252,7 +230,17 @@ fun TimerScreen(
             min(screenWidth - 12.dp, screenHeight * 0.64f)
         }
 
-        // Layer 0: Playful Phase & Start Ripple Wave
+        // Layer 0: Motion Animated Timer Background
+        AnimatedTimerBackground(
+            animation = effectiveAnimation,
+            phase = timerState.phase,
+            progress = timerState.progress,
+            colorScheme = timerState.colorScheme,
+            isDark = isDark,
+            modifier = Modifier.fillMaxSize()
+        )
+
+        // Layer 0.5: Playful Phase & Start Ripple Wave
         PhaseRippleEffect(
             triggerKey = timerState.phase,
             color = phaseColor
@@ -794,104 +782,3 @@ private fun CompletedActions(
     }
 }
 
-internal data class TimerBackgroundGradient(
-    val topColor: Color,
-    val midColor: Color,
-    val bottomColor: Color
-)
-
-internal fun getTimerBackgroundGradient(
-    phase: TimerPhase,
-    colorScheme: ColorSchemeOption,
-    isDark: Boolean
-): TimerBackgroundGradient {
-    return when (phase) {
-        TimerPhase.BREAK -> {
-            // Metallic / silver grey gradient - distinct, elegant & strong
-            if (isDark) {
-                // Brushed gunmetal / liquid titanium
-                TimerBackgroundGradient(
-                    topColor = Color(0xFF424754),
-                    midColor = Color(0xFF2B2F38),
-                    bottomColor = Color(0xFF16181D)
-                )
-            } else {
-                // Frosted platinum / polished sterling silver with crisp contrast
-                TimerBackgroundGradient(
-                    topColor = Color(0xFFE4E8F0),
-                    midColor = Color(0xFFD0D6E2),
-                    bottomColor = Color(0xFFB8C0D0)
-                )
-            }
-        }
-        TimerPhase.WARMUP -> {
-            val warmPrimary = PhaseWarmupColor
-            val warmSecondary = Color(0xFFFFB74D)
-            if (isDark) {
-                TimerBackgroundGradient(
-                    topColor = warmPrimary.copy(alpha = 0.62f).compositeOver(Color(0xFF18120E)),
-                    midColor = warmSecondary.copy(alpha = 0.44f).compositeOver(Color(0xFF120E0A)),
-                    bottomColor = warmPrimary.copy(alpha = 0.25f).compositeOver(Color(0xFF0C0907))
-                )
-            } else {
-                TimerBackgroundGradient(
-                    topColor = warmPrimary.copy(alpha = 0.46f).compositeOver(Color(0xFFFFFFFF)),
-                    midColor = warmSecondary.copy(alpha = 0.30f).compositeOver(Color(0xFFFAFBFD)),
-                    bottomColor = warmPrimary.copy(alpha = 0.16f).compositeOver(Color(0xFFF3F5FA))
-                )
-            }
-        }
-        TimerPhase.COOLDOWN -> {
-            val coolPrimary = PhaseCooldownColor
-            val coolSecondary = Color(0xFF80DEEA)
-            if (isDark) {
-                TimerBackgroundGradient(
-                    topColor = coolPrimary.copy(alpha = 0.62f).compositeOver(Color(0xFF0E1618)),
-                    midColor = coolSecondary.copy(alpha = 0.44f).compositeOver(Color(0xFF0A1012)),
-                    bottomColor = coolPrimary.copy(alpha = 0.25f).compositeOver(Color(0xFF060B0D))
-                )
-            } else {
-                TimerBackgroundGradient(
-                    topColor = coolPrimary.copy(alpha = 0.46f).compositeOver(Color(0xFFFFFFFF)),
-                    midColor = coolSecondary.copy(alpha = 0.30f).compositeOver(Color(0xFFFAFBFD)),
-                    bottomColor = coolPrimary.copy(alpha = 0.16f).compositeOver(Color(0xFFF3F5FA))
-                )
-            }
-        }
-        TimerPhase.COMPLETED -> {
-            val compPrimary = PhaseCompletedColor
-            val compSecondary = Color(0xFF81C784)
-            if (isDark) {
-                TimerBackgroundGradient(
-                    topColor = compPrimary.copy(alpha = 0.66f).compositeOver(Color(0xFF0E1810)),
-                    midColor = compSecondary.copy(alpha = 0.46f).compositeOver(Color(0xFF0A120B)),
-                    bottomColor = compPrimary.copy(alpha = 0.26f).compositeOver(Color(0xFF060D07))
-                )
-            } else {
-                TimerBackgroundGradient(
-                    topColor = compPrimary.copy(alpha = 0.48f).compositeOver(Color(0xFFFFFFFF)),
-                    midColor = compSecondary.copy(alpha = 0.32f).compositeOver(Color(0xFFFAFBFD)),
-                    bottomColor = compPrimary.copy(alpha = 0.18f).compositeOver(Color(0xFFF3F5FA))
-                )
-            }
-        }
-        TimerPhase.FOCUS -> {
-            // Selected color in a rich, vibrant, high-contrast gradient
-            val primary = colorScheme.primaryColor
-            val secondary = colorScheme.secondaryColor
-            if (isDark) {
-                TimerBackgroundGradient(
-                    topColor = primary.copy(alpha = 0.66f).compositeOver(Color(0xFF140F19)),
-                    midColor = secondary.copy(alpha = 0.46f).compositeOver(Color(0xFF0F0B13)),
-                    bottomColor = primary.copy(alpha = 0.26f).compositeOver(Color(0xFF0A070E))
-                )
-            } else {
-                TimerBackgroundGradient(
-                    topColor = primary.copy(alpha = 0.48f).compositeOver(Color(0xFFFFFFFF)),
-                    midColor = secondary.copy(alpha = 0.32f).compositeOver(Color(0xFFFAFBFD)),
-                    bottomColor = primary.copy(alpha = 0.18f).compositeOver(Color(0xFFF3F5FA))
-                )
-            }
-        }
-    }
-}

@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Lyhyt piippaus sekunnin välein ennen keskittymisvaiheen päättymistä</string>
     <string name="routine_countdown_duration_label">Lähtölaskentasignaalin kesto</string>
     <string name="routine_countdown_chip">%ds merkkiääni</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Ajastimen tausta-animaatio</string>
+    <string name="setting_bg_animation_desc">Valitse hienovarainen visuaalinen liike ajastimen taustalle</string>
+    <string name="routine_bg_animation_label">Tausta-animaatio</string>
+    <string name="bg_anim_app_default">Sovelluksen oletus</string>
+    <string name="bg_anim_app_default_desc">Käytä yleistä tausta-animaatioasetusta</string>
+    <string name="bg_anim_breathing_aura">Hengittävä aura</string>
+    <string name="bg_anim_breathing_aura_desc">Rauhallinen sinimuotoinen säteittäinen pulssi</string>
+    <string name="bg_anim_aurora_flow">Revontulivirtaus</string>
+    <string name="bg_anim_aurora_flow_desc">Pehmeästi aaltoilevat valot</string>
+    <string name="bg_anim_horizon_glow">Horisontin hehku</string>
+    <string name="bg_anim_horizon_glow_desc">Valo kohoaa ajan kuluessa</string>
+    <string name="bg_anim_metallic_sheen">Metallinen hohde</string>
+    <string name="bg_anim_metallic_sheen_desc">Vinottainen valon heijastus</string>
+    <string name="bg_anim_sensor_parallax">Anturiparallaksi</string>
+    <string name="bg_anim_sensor_parallax_desc">Reagoi vuorovaikutteisesti laitteen kallistukseen</string>
+    <string name="bg_anim_none">Ei mitään (Staattinen)</string>
+    <string name="bg_anim_none_desc">Puhdas liukuväri ilman liikettä</string>
 </resources>

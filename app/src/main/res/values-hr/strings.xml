@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Kratki zvučni signal svake sekunde prije završetka faze fokusa</string>
     <string name="routine_countdown_duration_label">Trajanje signala odbrojavanja</string>
     <string name="routine_countdown_chip">%ds signal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animacija pozadine mjerača</string>
+    <string name="setting_bg_animation_desc">Odaberite suptilno vizualno kretanje za pozadinu mjerača</string>
+    <string name="routine_bg_animation_label">Animacija pozadine</string>
+    <string name="bg_anim_app_default">Zadano u aplikaciji</string>
+    <string name="bg_anim_app_default_desc">Naslijedi globalnu postavku animacije pozadine</string>
+    <string name="bg_anim_breathing_aura">Dišuća aura</string>
+    <string name="bg_anim_breathing_aura_desc">Miran sinusni radijalni puls</string>
+    <string name="bg_anim_aurora_flow">Polarni tok</string>
+    <string name="bg_anim_aurora_flow_desc">Glatki svjetlosni valovi u pozadini</string>
+    <string name="bg_anim_horizon_glow">Sjaj horizonta</string>
+    <string name="bg_anim_horizon_glow_desc">Svjetlost se uzdiže kako vrijeme odmiče</string>
+    <string name="bg_anim_metallic_sheen">Metalni sjaj</string>
+    <string name="bg_anim_metallic_sheen_desc">Dijagonalni odsjaj svjetla</string>
+    <string name="bg_anim_sensor_parallax">Paralaksa senzora</string>
+    <string name="bg_anim_sensor_parallax_desc">Interaktivna reakcija na naginjanje uređaja</string>
+    <string name="bg_anim_none">Nijedna (Statično)</string>
+    <string name="bg_anim_none_desc">Čisti gradijent bez pokreta</string>
 </resources>

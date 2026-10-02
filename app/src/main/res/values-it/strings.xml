@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Breve segnale acustico ogni secondo prima del termine del focus</string>
     <string name="routine_countdown_duration_label">Durata del segnale di conto alla rovescia</string>
     <string name="routine_countdown_chip">%ds segnale</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animazione di sfondo del timer</string>
+    <string name="setting_bg_animation_desc">Scegli un movimento visivo sottile per lo sfondo del timer</string>
+    <string name="routine_bg_animation_label">Animazione di sfondo</string>
+    <string name="bg_anim_app_default">Predefinito dell\'app</string>
+    <string name="bg_anim_app_default_desc">Eredita l\'impostazione globale dell\'animazione</string>
+    <string name="bg_anim_breathing_aura">Aura respiratoria</string>
+    <string name="bg_anim_breathing_aura_desc">Pulsazione radiale sinusoidale rilassante</string>
+    <string name="bg_anim_aurora_flow">Flusso boreale</string>
+    <string name="bg_anim_aurora_flow_desc">Onde di luce soffusa in movimento</string>
+    <string name="bg_anim_horizon_glow">Chiarore all\'orizzonte</string>
+    <string name="bg_anim_horizon_glow_desc">L\'illuminazione sale con il trascorrere del tempo</string>
+    <string name="bg_anim_metallic_sheen">Riflesso metallico</string>
+    <string name="bg_anim_metallic_sheen_desc">Fascio di riflessi diagonali scorrevoli</string>
+    <string name="bg_anim_sensor_parallax">Parallasse del sensore</string>
+    <string name="bg_anim_sensor_parallax_desc">Reazione interattiva all\'inclinazione del dispositivo</string>
+    <string name="bg_anim_none">Nessuna (Statico)</string>
+    <string name="bg_anim_none_desc">Gradiente pulito senza animazione</string>
 </resources>

@@ -128,4 +128,23 @@
     <string name="routine_countdown_signal_desc">Kurzer Piepton jede Sekunde vor Ende der Fokusphase</string>
     <string name="routine_countdown_duration_label">Signaldauer des Countdowns</string>
     <string name="routine_countdown_chip">%ds Signal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Timer-Hintergrundanimation</string>
+    <string name="setting_bg_animation_desc">Subtile visuelle Bewegung für den Timer-Hintergrund wählen</string>
+    <string name="routine_bg_animation_label">Hintergrundanimation</string>
+    <string name="bg_anim_app_default">App-Standard verwenden</string>
+    <string name="bg_anim_app_default_desc">Globale Einstellung für Hintergrundanimation übernehmen</string>
+    <string name="bg_anim_breathing_aura">Atmende Aura</string>
+    <string name="bg_anim_breathing_aura_desc">Ruhiger sinusförmiger radialer Puls</string>
+    <string name="bg_anim_aurora_flow">Aurora-Fluss</string>
+    <string name="bg_anim_aurora_flow_desc">Sanft fließende Farblichtwellen</string>
+    <string name="bg_anim_horizon_glow">Horizont-Leuchten</string>
+    <string name="bg_anim_horizon_glow_desc">Lichtschein steigt mit ablaufender Zeit auf</string>
+    <string name="bg_anim_metallic_sheen">Metallischer Glanz</string>
+    <string name="bg_anim_metallic_sheen_desc">Diagonale Lichtreflex-Welle</string>
+    <string name="bg_anim_sensor_parallax">Sensor-Parallaxe</string>
+    <string name="bg_anim_sensor_parallax_desc">Reagiert interaktiv auf Neigung und Bewegung des Geräts</string>
+    <string name="bg_anim_none">Keine (Statisch)</string>
+    <string name="bg_anim_none_desc">Klarer Farbverlauf ohne Bewegung</string>
 </resources>

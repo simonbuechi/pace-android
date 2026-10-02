@@ -128,4 +128,23 @@
     <string name="routine_countdown_signal_desc">Short beep every second before focus phase ends</string>
     <string name="routine_countdown_duration_label">Signal Countdown Duration</string>
     <string name="routine_countdown_chip">%ds signal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Timer Background Animation</string>
+    <string name="setting_bg_animation_desc">Select subtle visual motion for the timer background</string>
+    <string name="routine_bg_animation_label">Background Animation</string>
+    <string name="bg_anim_app_default">Use App Default</string>
+    <string name="bg_anim_app_default_desc">Inherit global background animation setting</string>
+    <string name="bg_anim_breathing_aura">Breathing Aura</string>
+    <string name="bg_anim_breathing_aura_desc">Calm sinusoidal radial pulse</string>
+    <string name="bg_anim_aurora_flow">Aurora Flow</string>
+    <string name="bg_anim_aurora_flow_desc">Drifting ambient color light waves</string>
+    <string name="bg_anim_horizon_glow">Horizon Glow</string>
+    <string name="bg_anim_horizon_glow_desc">Ambient lighting rising as interval elapses</string>
+    <string name="bg_anim_metallic_sheen">Metallic Sheen</string>
+    <string name="bg_anim_metallic_sheen_desc">Diagonal specular highlight sweep</string>
+    <string name="bg_anim_sensor_parallax">Sensor Parallax</string>
+    <string name="bg_anim_sensor_parallax_desc">Interactive tilt reaction tracking device motion</string>
+    <string name="bg_anim_none">None (Static)</string>
+    <string name="bg_anim_none_desc">Clean solid gradient without motion</string>
 </resources>

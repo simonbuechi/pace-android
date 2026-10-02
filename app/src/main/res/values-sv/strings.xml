@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Kort pip varje sekund innan fokusfasen tar slut</string>
     <string name="routine_countdown_duration_label">Varaktighet för nedräkningssignal</string>
     <string name="routine_countdown_chip">%ds signal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Bakgrundsanimering för timer</string>
+    <string name="setting_bg_animation_desc">Välj en subtil visuell rörelse för timerns bakgrund</string>
+    <string name="routine_bg_animation_label">Bakgrundsanimering</string>
+    <string name="bg_anim_app_default">Appens standard</string>
+    <string name="bg_anim_app_default_desc">Ärv den globala inställningen för bakgrundsanimering</string>
+    <string name="bg_anim_breathing_aura">Andande aura</string>
+    <string name="bg_anim_breathing_aura_desc">Lugn sinusformad radiell puls</string>
+    <string name="bg_anim_aurora_flow">Norrskensflöde</string>
+    <string name="bg_anim_aurora_flow_desc">Mjuka ljusvågor i rörelse</string>
+    <string name="bg_anim_horizon_glow">Horisontglöd</string>
+    <string name="bg_anim_horizon_glow_desc">Ljusglans som stiger allteftersom tiden går</string>
+    <string name="bg_anim_metallic_sheen">Metallisk lyster</string>
+    <string name="bg_anim_metallic_sheen_desc">Diagonal svepande ljusreflektion</string>
+    <string name="bg_anim_sensor_parallax">Sensorparallax</string>
+    <string name="bg_anim_sensor_parallax_desc">Reagerar interaktivt på enhetens lutning</string>
+    <string name="bg_anim_none">Ingen (Statisk)</string>
+    <string name="bg_anim_none_desc">Stilren gradient utan rörelse</string>
 </resources>

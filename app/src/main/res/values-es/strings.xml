@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Pitido corto cada segundo antes de que termine el foco</string>
     <string name="routine_countdown_duration_label">Duración de la señal de cuenta atrás</string>
     <string name="routine_countdown_chip">%ds señal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animación de fondo del temporizador</string>
+    <string name="setting_bg_animation_desc">Selecciona un movimiento visual sutil para el fondo del temporizador</string>
+    <string name="routine_bg_animation_label">Animación de fondo</string>
+    <string name="bg_anim_app_default">Predeterminado de la app</string>
+    <string name="bg_anim_app_default_desc">Heredar el ajuste global de animación de fondo</string>
+    <string name="bg_anim_breathing_aura">Aura de respiración</string>
+    <string name="bg_anim_breathing_aura_desc">Pulso radial sinusoidal relajante</string>
+    <string name="bg_anim_aurora_flow">Flujo de aurora</string>
+    <string name="bg_anim_aurora_flow_desc">Ondas de luz ambiental en movimiento</string>
+    <string name="bg_anim_horizon_glow">Resplandor del horizonte</string>
+    <string name="bg_anim_horizon_glow_desc">La luz asciende a medida que transcurre el tiempo</string>
+    <string name="bg_anim_metallic_sheen">Brillo metálico</string>
+    <string name="bg_anim_metallic_sheen_desc">Destello diagonal reflectante</string>
+    <string name="bg_anim_sensor_parallax">Paralaje con sensor</string>
+    <string name="bg_anim_sensor_parallax_desc">Reacciona interactivamente a la inclinación del dispositivo</string>
+    <string name="bg_anim_none">Ninguna (Estático)</string>
+    <string name="bg_anim_none_desc">Degradado limpio sin movimiento</string>
 </resources>

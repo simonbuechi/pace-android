@@ -1,5 +1,6 @@
 package ch.simibu.pace.engine
 
+import ch.simibu.pace.model.BackgroundAnimationOption
 import ch.simibu.pace.model.ColorSchemeOption
 import ch.simibu.pace.model.Routine
 import ch.simibu.pace.model.SoundScheme
@@ -61,6 +62,7 @@ class TimerEngine(
     private var currentColorScheme: ColorSchemeOption = ColorSchemeOption.PACE
     private var currentCountdownSignalEnabled: Boolean = true
     private var currentCountdownSignalSeconds: Int = 3
+    private var currentBackgroundAnimation: BackgroundAnimationOption = BackgroundAnimationOption.APP_DEFAULT
     private var sessionTitle: String = ""
 
     fun startRoutine(
@@ -68,7 +70,8 @@ class TimerEngine(
         focusSound: SoundScheme = routine.soundScheme,
         focusRepeats: Int = 1,
         breakSound: SoundScheme = routine.soundScheme,
-        breakRepeats: Int = 1
+        breakRepeats: Int = 1,
+        backgroundAnimation: BackgroundAnimationOption = routine.backgroundAnimation
     ) {
         startSession(
             title = routine.name,
@@ -85,7 +88,8 @@ class TimerEngine(
             breakRepeats = breakRepeats,
             color = routine.colorScheme,
             countdownSignalEnabled = routine.countdownSignalEnabled,
-            countdownSignalSeconds = routine.countdownSignalSeconds
+            countdownSignalSeconds = routine.countdownSignalSeconds,
+            backgroundAnimation = backgroundAnimation
         )
     }
 
@@ -99,7 +103,8 @@ class TimerEngine(
         focusRepeats: Int = 1,
         breakSound: SoundScheme = SoundScheme.CHIME,
         breakRepeats: Int = 1,
-        color: ColorSchemeOption = ColorSchemeOption.PACE
+        color: ColorSchemeOption = ColorSchemeOption.PACE,
+        backgroundAnimation: BackgroundAnimationOption = BackgroundAnimationOption.APP_DEFAULT
     ) {
         startSession(
             title = "Quick Session",
@@ -114,7 +119,8 @@ class TimerEngine(
             focusRepeats = focusRepeats,
             breakSound = breakSound,
             breakRepeats = breakRepeats,
-            color = color
+            color = color,
+            backgroundAnimation = backgroundAnimation
         )
     }
 
@@ -133,7 +139,8 @@ class TimerEngine(
         breakRepeats: Int = 1,
         color: ColorSchemeOption,
         countdownSignalEnabled: Boolean = true,
-        countdownSignalSeconds: Int = 3
+        countdownSignalSeconds: Int = 3,
+        backgroundAnimation: BackgroundAnimationOption = BackgroundAnimationOption.APP_DEFAULT
     ) {
         tickerJob?.cancel()
 
@@ -152,6 +159,7 @@ class TimerEngine(
         currentBreakSoundScheme = breakSound
         currentBreakSoundRepeats = breakRepeats.coerceIn(1, 5)
         currentColorScheme = color
+        currentBackgroundAnimation = backgroundAnimation
 
         val initialPhase = if (warmupSeconds > 0) TimerPhase.WARMUP else TimerPhase.FOCUS
         val initialDuration = if (warmupSeconds > 0) warmupSeconds else focusSeconds
@@ -169,7 +177,8 @@ class TimerEngine(
             isCompleted = false,
             routineName = sessionTitle,
             soundScheme = currentFocusSoundScheme,
-            colorScheme = currentColorScheme
+            colorScheme = currentColorScheme,
+            backgroundAnimation = currentBackgroundAnimation
         )
 
         _events.tryEmit(TimerEvent.PhaseTransition(initialPhase, 1, initialSound, initialRepeats))
@@ -261,7 +270,8 @@ class TimerEngine(
             breakRepeats = currentBreakSoundRepeats,
             color = currentColorScheme,
             countdownSignalEnabled = currentCountdownSignalEnabled,
-            countdownSignalSeconds = currentCountdownSignalSeconds
+            countdownSignalSeconds = currentCountdownSignalSeconds,
+            backgroundAnimation = currentBackgroundAnimation
         )
     }
 

@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Bip court chaque seconde avant la fin de la phase de concentration</string>
     <string name="routine_countdown_duration_label">Durée du compte à rebours</string>
     <string name="routine_countdown_chip">%ds signal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animation de fond du minuteur</string>
+    <string name="setting_bg_animation_desc">Choisir un mouvement visuel subtil pour l\'arrière-plan du minuteur</string>
+    <string name="routine_bg_animation_label">Animation d\'arrière-plan</string>
+    <string name="bg_anim_app_default">Par défaut de l\'application</string>
+    <string name="bg_anim_app_default_desc">Hériter du paramètre global d\'animation</string>
+    <string name="bg_anim_breathing_aura">Aura respirante</string>
+    <string name="bg_anim_breathing_aura_desc">Pulsation radiale sinusoïdale apaisante</string>
+    <string name="bg_anim_aurora_flow">Flux d\'aurore</string>
+    <string name="bg_anim_aurora_flow_desc">Ondes lumineuses douces en mouvement</string>
+    <string name="bg_anim_horizon_glow">Lueur d\'horizon</string>
+    <string name="bg_anim_horizon_glow_desc">Lumière montante au fil du temps écoulé</string>
+    <string name="bg_anim_metallic_sheen">Éclat métallique</string>
+    <string name="bg_anim_metallic_sheen_desc">Balayage diagonal de reflets spéculaires</string>
+    <string name="bg_anim_sensor_parallax">Parallaxe gyroscopique</string>
+    <string name="bg_anim_sensor_parallax_desc">Réagit à l\'inclinaison et aux mouvements de l\'appareil</string>
+    <string name="bg_anim_none">Aucune (Statique)</string>
+    <string name="bg_anim_none_desc">Dégradé pur sans mouvement</string>
 </resources>

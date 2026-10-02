@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Krótki sygnał co sekundę przed końcem fazy skupienia</string>
     <string name="routine_countdown_duration_label">Czas trwania sygnału odliczania</string>
     <string name="routine_countdown_chip">%ds sygnał</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animacja tła minutnika</string>
+    <string name="setting_bg_animation_desc">Wybierz subtelny ruch wizualny tła minutnika</string>
+    <string name="routine_bg_animation_label">Animacja tła</string>
+    <string name="bg_anim_app_default">Domyślne aplikacji</string>
+    <string name="bg_anim_app_default_desc">Dziedziczy globalne ustawienie animacji tła</string>
+    <string name="bg_anim_breathing_aura">Oddychająca aura</string>
+    <string name="bg_anim_breathing_aura_desc">Spokojny sinusoidalny puls radialny</string>
+    <string name="bg_anim_aurora_flow">Przepływ zorzy</string>
+    <string name="bg_anim_aurora_flow_desc">Płynne fale świetlne w tle</string>
+    <string name="bg_anim_horizon_glow">Blask horyzontu</string>
+    <string name="bg_anim_horizon_glow_desc">Światło wznosi się wraz z upływem czasu</string>
+    <string name="bg_anim_metallic_sheen">Metaliczny połysk</string>
+    <string name="bg_anim_metallic_sheen_desc">Ukośny refleks świetlny</string>
+    <string name="bg_anim_sensor_parallax">Paralaksa czujnika</string>
+    <string name="bg_anim_sensor_parallax_desc">Interaktywna reakcja na pochylenie urządzenia</string>
+    <string name="bg_anim_none">Brak (Statyczny)</string>
+    <string name="bg_anim_none_desc">Czysty gradient bez ruchu</string>
 </resources>

@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Короткий звуковий сигнал щосекунди перед завершенням фокусу</string>
     <string name="routine_countdown_duration_label">Тривалість сигналу відліку</string>
     <string name="routine_countdown_chip">%ds сигнал</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Анімація фону таймера</string>
+    <string name="setting_bg_animation_desc">Оберіть тонкий візуальний рух для фону таймера</string>
+    <string name="routine_bg_animation_label">Анімація фону</string>
+    <string name="bg_anim_app_default">За замовчуванням застосунку</string>
+    <string name="bg_anim_app_default_desc">Успадковувати глобальне налаштування анімації</string>
+    <string name="bg_anim_breathing_aura">Дихаюча аура</string>
+    <string name="bg_anim_breathing_aura_desc">Спокійний синусоїдальний радіальний пульс</string>
+    <string name="bg_anim_aurora_flow">Сяйво аврори</string>
+    <string name="bg_anim_aurora_flow_desc">Плавні світлові хвилі градієнта</string>
+    <string name="bg_anim_horizon_glow">Світіння горизонту</string>
+    <string name="bg_anim_horizon_glow_desc">Світло піднімається з перебігом часу</string>
+    <string name="bg_anim_metallic_sheen">Металевий блиск</string>
+    <string name="bg_anim_metallic_sheen_desc">Діагональний відблиск світла</string>
+    <string name="bg_anim_sensor_parallax">Паралакс датчика</string>
+    <string name="bg_anim_sensor_parallax_desc">Інтерактивна реакція на нахил пристрою</string>
+    <string name="bg_anim_none">Немає (Статичний)</string>
+    <string name="bg_anim_none_desc">Чистий градієнт без руху</string>
 </resources>

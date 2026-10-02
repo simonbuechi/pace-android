@@ -3,7 +3,7 @@ package ch.simibu.pace
 import androidx.compose.ui.graphics.Color
 import ch.simibu.pace.model.ColorSchemeOption
 import ch.simibu.pace.model.TimerPhase
-import ch.simibu.pace.ui.screens.getTimerBackgroundGradient
+import ch.simibu.pace.ui.components.getTimerBackgroundGradient
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertTrue

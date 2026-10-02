@@ -11,7 +11,8 @@ data class TimerState(
     val isCompleted: Boolean = false,
     val routineName: String = "",
     val soundScheme: SoundScheme = SoundScheme.BEEP,
-    val colorScheme: ColorSchemeOption = ColorSchemeOption.PACE
+    val colorScheme: ColorSchemeOption = ColorSchemeOption.PACE,
+    val backgroundAnimation: BackgroundAnimationOption = BackgroundAnimationOption.APP_DEFAULT
 ) {
     val progress: Float
         get() = if (totalSecondsInPhase > 0) {

@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Semnal sonor scurt în fiecare secundă înainte de terminarea concentrării</string>
     <string name="routine_countdown_duration_label">Durata semnalului de numărătoare inversă</string>
     <string name="routine_countdown_chip">%ds semnal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animație fundal cronometru</string>
+    <string name="setting_bg_animation_desc">Selectează o mișcare vizuală subtilă pentru fundalul cronometrului</string>
+    <string name="routine_bg_animation_label">Animație fundal</string>
+    <string name="bg_anim_app_default">Implicit din aplicație</string>
+    <string name="bg_anim_app_default_desc">Preia setarea globală pentru animația de fundal</string>
+    <string name="bg_anim_breathing_aura">Aură respirantă</string>
+    <string name="bg_anim_breathing_aura_desc">Puls radial sinusoidal relaxant</string>
+    <string name="bg_anim_aurora_flow">Flux boreal</string>
+    <string name="bg_anim_aurora_flow_desc">Valuri line de lumină ambientală</string>
+    <string name="bg_anim_horizon_glow">Strălucire la orizont</string>
+    <string name="bg_anim_horizon_glow_desc">Lumina se ridică pe măsură ce timpul se scurge</string>
+    <string name="bg_anim_metallic_sheen">Luciu metalic</string>
+    <string name="bg_anim_metallic_sheen_desc">Reflexie diagonală strălucitoare</string>
+    <string name="bg_anim_sensor_parallax">Paralaxă cu senzor</string>
+    <string name="bg_anim_sensor_parallax_desc">Reacție interactivă la înclinarea dispozitivului</string>
+    <string name="bg_anim_none">Niciuna (Static)</string>
+    <string name="bg_anim_none_desc">Degrade simplu fără mișcare</string>
 </resources>

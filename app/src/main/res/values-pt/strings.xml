@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Bip curto a cada segundo antes do fim da fase de foco</string>
     <string name="routine_countdown_duration_label">Duração do sinal de contagem regressiva</string>
     <string name="routine_countdown_chip">%ds sinal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animação de fundo do cronômetro</string>
+    <string name="setting_bg_animation_desc">Selecione um movimento visual sutil para o fundo do cronômetro</string>
+    <string name="routine_bg_animation_label">Animação de fundo</string>
+    <string name="bg_anim_app_default">Padrão do aplicativo</string>
+    <string name="bg_anim_app_default_desc">Herda a configuração global de animação de fundo</string>
+    <string name="bg_anim_breathing_aura">Aura de respiração</string>
+    <string name="bg_anim_breathing_aura_desc">Pulsação radial senoidal relaxante</string>
+    <string name="bg_anim_aurora_flow">Fluxo de aurora</string>
+    <string name="bg_anim_aurora_flow_desc">Ondas de luz suave em movimento contínuo</string>
+    <string name="bg_anim_horizon_glow">Brilho no horizonte</string>
+    <string name="bg_anim_horizon_glow_desc">A iluminação sobe conforme o tempo passa</string>
+    <string name="bg_anim_metallic_sheen">Brilho metálico</string>
+    <string name="bg_anim_metallic_sheen_desc">Varredura diagonal de reflexo metálico</string>
+    <string name="bg_anim_sensor_parallax">Paralaxe do sensor</string>
+    <string name="bg_anim_sensor_parallax_desc">Reage interativamente à inclinação do dispositivo</string>
+    <string name="bg_anim_none">Nenhuma (Estático)</string>
+    <string name="bg_anim_none_desc">Gradiente limpo e estático</string>
 </resources>

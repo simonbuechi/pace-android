@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Rövid sípolás másodpercenként a fókuszfázis vége előtt</string>
     <string name="routine_countdown_duration_label">Jelzés visszaszámlálásának időtartama</string>
     <string name="routine_countdown_chip">%d mp jel</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Időzítő háttéranimációja</string>
+    <string name="setting_bg_animation_desc">Finom vizuális mozgás kiválasztása az időzítő hátteréhez</string>
+    <string name="routine_bg_animation_label">Háttéranimáció</string>
+    <string name="bg_anim_app_default">Alkalmazás alapértelmezett</string>
+    <string name="bg_anim_app_default_desc">Globális háttéranimációs beállítás átvétele</string>
+    <string name="bg_anim_breathing_aura">Lélegző aura</string>
+    <string name="bg_anim_breathing_aura_desc">Nyugtató szinuszos radiális lüktetés</string>
+    <string name="bg_anim_aurora_flow">Sarki fény áramlás</string>
+    <string name="bg_anim_aurora_flow_desc">Lágy, hullámzó fények a háttérben</string>
+    <string name="bg_anim_horizon_glow">Horizont ragyogás</string>
+    <string name="bg_anim_horizon_glow_desc">A fény az idő múlásával felfelé emelkedik</string>
+    <string name="bg_anim_metallic_sheen">Fémes csillogás</string>
+    <string name="bg_anim_metallic_sheen_desc">Átlós fénycsík suhanása</string>
+    <string name="bg_anim_sensor_parallax">Szenzoros parallaxis</string>
+    <string name="bg_anim_sensor_parallax_desc">Interaktív reakció a készülék döntésére</string>
+    <string name="bg_anim_none">Nincs (Statikus)</string>
+    <string name="bg_anim_none_desc">Tiszta színátmenet mozgás nélkül</string>
 </resources>

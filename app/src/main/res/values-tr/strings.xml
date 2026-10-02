@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Odak süresi bitmeden önce her saniye kısa bip sesi</string>
     <string name="routine_countdown_duration_label">Sinyal Geri Sayım Süresi</string>
     <string name="routine_countdown_chip">%ds sinyal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Zamanlayıcı Arka Plan Animasyonu</string>
+    <string name="setting_bg_animation_desc">Zamanlayıcı arka planı için hafif görsel hareket seçin</string>
+    <string name="routine_bg_animation_label">Arka Plan Animasyonu</string>
+    <string name="bg_anim_app_default">Uygulama Varsayılanı</string>
+    <string name="bg_anim_app_default_desc">Genel arka plan animasyonu ayarını kullan</string>
+    <string name="bg_anim_breathing_aura">Nefes Alan Aura</string>
+    <string name="bg_anim_breathing_aura_desc">Sakin sinüzoidal radyal nabız</string>
+    <string name="bg_anim_aurora_flow">Aurora Akışı</string>
+    <string name="bg_anim_aurora_flow_desc">Akıcı ortam ışık dalgaları</string>
+    <string name="bg_anim_horizon_glow">Ufuk Parıltısı</string>
+    <string name="bg_anim_horizon_glow_desc">Süre ilerledikçe yükselen ortam ışığı</string>
+    <string name="bg_anim_metallic_sheen">Metalik Parıltı</string>
+    <string name="bg_anim_metallic_sheen_desc">Çapraz ışık yansıması dalgası</string>
+    <string name="bg_anim_sensor_parallax">Sensör Paralaksı</string>
+    <string name="bg_anim_sensor_parallax_desc">Cihaz eğimine etkileşimli tepki</string>
+    <string name="bg_anim_none">Yok (Statik)</string>
+    <string name="bg_anim_none_desc">Hareketsiz sade degrade</string>
 </resources>

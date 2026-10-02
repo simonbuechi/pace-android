@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Kort pip hvert sekund før fokusfasen avsluttes</string>
     <string name="routine_countdown_duration_label">Varighet for nedtellingssignal</string>
     <string name="routine_countdown_chip">%ds signal</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Bakgrunnsanimasjon for tidtaker</string>
+    <string name="setting_bg_animation_desc">Velg subtil visuell bevegelse for tidtakerens bakgrunn</string>
+    <string name="routine_bg_animation_label">Bakgrunnsanimasjon</string>
+    <string name="bg_anim_app_default">App-standard</string>
+    <string name="bg_anim_app_default_desc">Bruk global innstilling for bakgrunnsanimasjon</string>
+    <string name="bg_anim_breathing_aura">Pustende aura</string>
+    <string name="bg_anim_breathing_aura_desc">Rolig sinusformet radial puls</string>
+    <string name="bg_anim_aurora_flow">Nordlysstrøm</string>
+    <string name="bg_anim_aurora_flow_desc">Myke lysbølger i bevegelse</string>
+    <string name="bg_anim_horizon_glow">Horisontglød</string>
+    <string name="bg_anim_horizon_glow_desc">Lysglans stiger opp etter hvert som tiden går</string>
+    <string name="bg_anim_metallic_sheen">Metallisk skinn</string>
+    <string name="bg_anim_metallic_sheen_desc">Diagonal sveipende lysrefleksjon</string>
+    <string name="bg_anim_sensor_parallax">Sensor-parallakse</string>
+    <string name="bg_anim_sensor_parallax_desc">Reagerer interaktivt på enhetens helling</string>
+    <string name="bg_anim_none">Ingen (Statisk)</string>
+    <string name="bg_anim_none_desc">Ren fargeovergang uten bevegelse</string>
 </resources>

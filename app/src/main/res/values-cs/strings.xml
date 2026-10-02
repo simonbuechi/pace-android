@@ -115,4 +115,23 @@
     <string name="routine_countdown_signal_desc">Krátké pípnutí každou sekundu před koncem fáze soustředění</string>
     <string name="routine_countdown_duration_label">Délka signálu odpočítávání</string>
     <string name="routine_countdown_chip">%ds signál</string>
+
+    <!-- Background Animation -->
+    <string name="setting_bg_animation_title">Animace pozadí časovače</string>
+    <string name="setting_bg_animation_desc">Vyberte jemný vizuální pohyb pro pozadí časovače</string>
+    <string name="routine_bg_animation_label">Animace pozadí</string>
+    <string name="bg_anim_app_default">Výchozí nastavení aplikace</string>
+    <string name="bg_anim_app_default_desc">Přebírá globální nastavení animace pozadí</string>
+    <string name="bg_anim_breathing_aura">Dýchající aura</string>
+    <string name="bg_anim_breathing_aura_desc">Klidný sinusový radiální pulz</string>
+    <string name="bg_anim_aurora_flow">Polární proudění</string>
+    <string name="bg_anim_aurora_flow_desc">Plynulé světelné vlny na pozadí</string>
+    <string name="bg_anim_horizon_glow">Záře horizontu</string>
+    <string name="bg_anim_horizon_glow_desc">Světlo stoupá s ubývajícím časem</string>
+    <string name="bg_anim_metallic_sheen">Kovový lesk</string>
+    <string name="bg_anim_metallic_sheen_desc">Diagonální světelný odlesk</string>
+    <string name="bg_anim_sensor_parallax">Paralaxa senzoru</string>
+    <string name="bg_anim_sensor_parallax_desc">Interaktivní reakce na naklánění zařízení</string>
+    <string name="bg_anim_none">Žádná (Statické)</string>
+    <string name="bg_anim_none_desc">Čistý přechod bez pohybu</string>
 </resources>

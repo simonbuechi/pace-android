@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.VolumeUp
+import androidx.compose.material.icons.rounded.AutoAwesome
 import androidx.compose.material.icons.rounded.DarkMode
 import androidx.compose.material.icons.rounded.LightMode
 import androidx.compose.material.icons.rounded.PlayArrow
@@ -57,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import ch.simibu.pace.PaceApplication
 import ch.simibu.pace.R
 import ch.simibu.pace.data.SettingsRepository
+import ch.simibu.pace.model.BackgroundAnimationOption
 import ch.simibu.pace.model.SoundScheme
 import ch.simibu.pace.ui.components.TactileCard
 
@@ -73,9 +75,11 @@ fun SettingsScreen() {
     val breakSoundRepeats by settingsRepo.breakSoundRepeats.collectAsState()
     val vibrationEnabled by settingsRepo.vibrationEnabled.collectAsState()
     val screenAwake by settingsRepo.screenAwake.collectAsState()
+    val backgroundAnimation by settingsRepo.backgroundAnimation.collectAsState()
 
     var focusDropdownExpanded by remember { mutableStateOf(false) }
     var breakDropdownExpanded by remember { mutableStateOf(false) }
+    var bgAnimationDropdownExpanded by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
@@ -136,6 +140,76 @@ fun SettingsScreen() {
                             selected = themeMode == mode
                         ) {
                             Text(stringResource(labelRes))
+                        }
+                    }
+                }
+
+                HorizontalDivider(modifier = Modifier.padding(vertical = 16.dp))
+
+                // Timer Background Animation Selection
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Rounded.AutoAwesome,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(24.dp)
+                    )
+                    Spacer(modifier = Modifier.size(12.dp))
+                    Column {
+                        Text(
+                            text = stringResource(R.string.setting_bg_animation_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                        Text(
+                            text = stringResource(R.string.setting_bg_animation_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                ExposedDropdownMenuBox(
+                    expanded = bgAnimationDropdownExpanded,
+                    onExpandedChange = { bgAnimationDropdownExpanded = it }
+                ) {
+                    OutlinedTextField(
+                        value = stringResource(backgroundAnimation.titleRes),
+                        onValueChange = {},
+                        readOnly = true,
+                        supportingText = { Text(stringResource(backgroundAnimation.descRes)) },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = bgAnimationDropdownExpanded) },
+                        modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable, true)
+                            .fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    ExposedDropdownMenu(
+                        expanded = bgAnimationDropdownExpanded,
+                        onDismissRequest = { bgAnimationDropdownExpanded = false }
+                    ) {
+                        BackgroundAnimationOption.GLOBAL_OPTIONS.forEach { option ->
+                            DropdownMenuItem(
+                                text = {
+                                    Column {
+                                        Text(
+                                            text = stringResource(option.titleRes),
+                                            fontWeight = if (backgroundAnimation == option) FontWeight.Bold else FontWeight.Normal
+                                        )
+                                        Text(
+                                            text = stringResource(option.descRes),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                },
+                                onClick = {
+                                    settingsRepo.setBackgroundAnimation(option)
+                                    bgAnimationDropdownExpanded = false
+                                }
+                            )
                         }
                     }
                 }
