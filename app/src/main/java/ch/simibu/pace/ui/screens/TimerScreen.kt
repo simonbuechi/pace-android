@@ -55,6 +55,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -65,6 +66,7 @@ import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.sp
 import ch.simibu.pace.PaceApplication
 import ch.simibu.pace.R
+import ch.simibu.pace.model.ColorSchemeOption
 import ch.simibu.pace.model.TimerPhase
 import ch.simibu.pace.service.PaceTimerService
 import ch.simibu.pace.ui.components.CircularTimerRing
@@ -133,32 +135,48 @@ fun TimerScreen(
         }
     }
 
+    val isDark = isTactileThemeDark()
+
     val phaseColor = when (timerState.phase) {
         TimerPhase.WARMUP -> PhaseWarmupColor
-        TimerPhase.FOCUS -> PaceRaspberry
-        TimerPhase.BREAK -> PhaseBreakColor
+        TimerPhase.FOCUS -> timerState.colorScheme.primaryColor
+        TimerPhase.BREAK -> if (isDark) Color(0xFFCBD5E1) else Color(0xFF475569)
         TimerPhase.COOLDOWN -> PhaseCooldownColor
-        TimerPhase.COMPLETED -> PaceMagenta
+        TimerPhase.COMPLETED -> PhaseCompletedColor
     }
 
-    val animatedPhaseColor by animateColorAsState(
-        targetValue = phaseColor,
-        animationSpec = tween(600),
-        label = "bg_phase_color"
-    )
+    val targetGradient = remember(timerState.phase, timerState.colorScheme, isDark) {
+        getTimerBackgroundGradient(
+            phase = timerState.phase,
+            colorScheme = timerState.colorScheme,
+            isDark = isDark
+        )
+    }
 
-    val isDark = isTactileThemeDark()
+    val animatedTopColor by animateColorAsState(
+        targetValue = targetGradient.topColor,
+        animationSpec = tween(600),
+        label = "bg_top_color"
+    )
+    val animatedMidColor by animateColorAsState(
+        targetValue = targetGradient.midColor,
+        animationSpec = tween(600),
+        label = "bg_mid_color"
+    )
+    val animatedBottomColor by animateColorAsState(
+        targetValue = targetGradient.bottomColor,
+        animationSpec = tween(600),
+        label = "bg_bottom_color"
+    )
 
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
             .background(
                 Brush.verticalGradient(
-                    colors = listOf(
-                        animatedPhaseColor.copy(alpha = if (isDark) 0.16f else 0.10f),
-                        MaterialTheme.colorScheme.background,
-                        MaterialTheme.colorScheme.background
-                    )
+                    0.0f to animatedTopColor,
+                    0.55f to animatedMidColor,
+                    1.0f to animatedBottomColor
                 )
             )
             .clickable(
@@ -190,7 +208,8 @@ fun TimerScreen(
                 progress = timerState.progress,
                 phase = timerState.phase,
                 remainingSeconds = timerState.remainingSecondsInPhase,
-                accentColor = PaceRaspberry,
+                accentColor = timerState.colorScheme.primaryColor,
+                colorScheme = timerState.colorScheme,
                 strokeWidth = if (isLandscape) 14.dp else 16.dp,
                 isMuted = true
             )
@@ -408,6 +427,17 @@ fun TimerScreen(
                 }
 
                 // Tactile Play/Pause Pill Button with Brand Gradient
+                // Tactile Play/Pause Pill Button with Dynamic Routine / Metallic Gradient
+                val playPauseBrush = if (timerState.phase == TimerPhase.BREAK) {
+                    if (isDark) {
+                        Brush.linearGradient(listOf(Color(0xFF64748B), Color(0xFF475569)))
+                    } else {
+                        Brush.linearGradient(listOf(Color(0xFF475569), Color(0xFF334155)))
+                    }
+                } else {
+                    Brush.linearGradient(listOf(timerState.colorScheme.primaryColor, timerState.colorScheme.secondaryColor))
+                }
+
                 TactilePillButton(
                     modifier = Modifier
                         .size(if (isLandscape) 64.dp else 86.dp)
@@ -424,7 +454,7 @@ fun TimerScreen(
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(PaceBrandGradient),
+                            .background(playPauseBrush),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
@@ -632,6 +662,108 @@ private fun CompletedActions(
                         fontWeight = FontWeight.Bold
                     )
                 }
+            }
+        }
+    }
+}
+
+internal data class TimerBackgroundGradient(
+    val topColor: Color,
+    val midColor: Color,
+    val bottomColor: Color
+)
+
+internal fun getTimerBackgroundGradient(
+    phase: TimerPhase,
+    colorScheme: ColorSchemeOption,
+    isDark: Boolean
+): TimerBackgroundGradient {
+    return when (phase) {
+        TimerPhase.BREAK -> {
+            // Metallic / silver grey gradient
+            if (isDark) {
+                // Brushed gunmetal / liquid titanium
+                TimerBackgroundGradient(
+                    topColor = Color(0xFF343842),
+                    midColor = Color(0xFF22252C),
+                    bottomColor = Color(0xFF131518)
+                )
+            } else {
+                // Frosted platinum / polished sterling silver
+                TimerBackgroundGradient(
+                    topColor = Color(0xFFF9FAFC),
+                    midColor = Color(0xFFE5E9F1),
+                    bottomColor = Color(0xFFD7DCE5)
+                )
+            }
+        }
+        TimerPhase.WARMUP -> {
+            val warmPrimary = PhaseWarmupColor
+            val warmSecondary = Color(0xFFFFB74D)
+            if (isDark) {
+                TimerBackgroundGradient(
+                    topColor = warmPrimary.copy(alpha = 0.34f).compositeOver(Color(0xFF141216)),
+                    midColor = warmSecondary.copy(alpha = 0.22f).compositeOver(Color(0xFF0F0E12)),
+                    bottomColor = warmPrimary.copy(alpha = 0.12f).compositeOver(Color(0xFF0A090D))
+                )
+            } else {
+                TimerBackgroundGradient(
+                    topColor = warmPrimary.copy(alpha = 0.24f).compositeOver(Color(0xFFFCFCFD)),
+                    midColor = warmSecondary.copy(alpha = 0.15f).compositeOver(Color(0xFFF7F8FA)),
+                    bottomColor = warmPrimary.copy(alpha = 0.08f).compositeOver(Color(0xFFF0F2F6))
+                )
+            }
+        }
+        TimerPhase.COOLDOWN -> {
+            val coolPrimary = PhaseCooldownColor
+            val coolSecondary = Color(0xFF80DEEA)
+            if (isDark) {
+                TimerBackgroundGradient(
+                    topColor = coolPrimary.copy(alpha = 0.34f).compositeOver(Color(0xFF101416)),
+                    midColor = coolSecondary.copy(alpha = 0.22f).compositeOver(Color(0xFF0C1012)),
+                    bottomColor = coolPrimary.copy(alpha = 0.12f).compositeOver(Color(0xFF080B0D))
+                )
+            } else {
+                TimerBackgroundGradient(
+                    topColor = coolPrimary.copy(alpha = 0.24f).compositeOver(Color(0xFFFCFCFD)),
+                    midColor = coolSecondary.copy(alpha = 0.15f).compositeOver(Color(0xFFF7F8FA)),
+                    bottomColor = coolPrimary.copy(alpha = 0.08f).compositeOver(Color(0xFFF0F2F6))
+                )
+            }
+        }
+        TimerPhase.COMPLETED -> {
+            val compPrimary = PhaseCompletedColor
+            val compSecondary = Color(0xFF81C784)
+            if (isDark) {
+                TimerBackgroundGradient(
+                    topColor = compPrimary.copy(alpha = 0.35f).compositeOver(Color(0xFF101512)),
+                    midColor = compSecondary.copy(alpha = 0.22f).compositeOver(Color(0xFF0C110E)),
+                    bottomColor = compPrimary.copy(alpha = 0.12f).compositeOver(Color(0xFF080D09))
+                )
+            } else {
+                TimerBackgroundGradient(
+                    topColor = compPrimary.copy(alpha = 0.24f).compositeOver(Color(0xFFFCFCFD)),
+                    midColor = compSecondary.copy(alpha = 0.15f).compositeOver(Color(0xFFF7F8FA)),
+                    bottomColor = compPrimary.copy(alpha = 0.08f).compositeOver(Color(0xFFF0F2F6))
+                )
+            }
+        }
+        TimerPhase.FOCUS -> {
+            // Selected color (for routines and quick start) in a rich, muted gradient with optimal contrast
+            val primary = colorScheme.primaryColor
+            val secondary = colorScheme.secondaryColor
+            if (isDark) {
+                TimerBackgroundGradient(
+                    topColor = primary.copy(alpha = 0.36f).compositeOver(Color(0xFF141218)),
+                    midColor = secondary.copy(alpha = 0.24f).compositeOver(Color(0xFF0F0E13)),
+                    bottomColor = primary.copy(alpha = 0.14f).compositeOver(Color(0xFF0A090D))
+                )
+            } else {
+                TimerBackgroundGradient(
+                    topColor = primary.copy(alpha = 0.22f).compositeOver(Color(0xFFFCFCFD)),
+                    midColor = secondary.copy(alpha = 0.14f).compositeOver(Color(0xFFF7F8FA)),
+                    bottomColor = primary.copy(alpha = 0.06f).compositeOver(Color(0xFFF0F2F6))
+                )
             }
         }
     }

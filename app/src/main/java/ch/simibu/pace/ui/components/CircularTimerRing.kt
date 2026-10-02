@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import ch.simibu.pace.model.ColorSchemeOption
 import ch.simibu.pace.model.TimerPhase
 import ch.simibu.pace.ui.theme.PaceDarkSurfaceSunken
 import ch.simibu.pace.ui.theme.PaceLightSurfaceSunken
@@ -45,7 +46,8 @@ fun CircularTimerRing(
     progress: Float,
     phase: TimerPhase,
     remainingSeconds: Int,
-    accentColor: Color,
+    accentColor: Color = PaceRaspberry,
+    colorScheme: ColorSchemeOption = ColorSchemeOption.PACE,
     strokeWidth: Dp = 16.dp,
     isMuted: Boolean = true,
     content: (@Composable () -> Unit)? = null
@@ -56,10 +58,12 @@ fun CircularTimerRing(
         label = "ring_progress"
     )
 
+    val isDark = isTactileThemeDark()
+
     val targetColor = when (phase) {
         TimerPhase.WARMUP -> PhaseWarmupColor
-        TimerPhase.FOCUS -> accentColor
-        TimerPhase.BREAK -> PhaseBreakColor
+        TimerPhase.FOCUS -> colorScheme.primaryColor
+        TimerPhase.BREAK -> if (isDark) Color(0xFFCBD5E1) else Color(0xFF475569)
         TimerPhase.COOLDOWN -> PhaseCooldownColor
         TimerPhase.COMPLETED -> PhaseCompletedColor
     }
@@ -87,17 +91,20 @@ fun CircularTimerRing(
         animateFloatAsState(1.0f, label = "idle_scale")
     }
 
-    val isDark = isTactileThemeDark()
     val baseTrackBg = if (isDark) PaceDarkSurfaceSunken else PaceLightSurfaceSunken
     val trackBgColor = if (isMuted) baseTrackBg.copy(alpha = if (isDark) 0.40f else 0.50f) else baseTrackBg
     val trackBorderColor = if (isDark) Color.White.copy(alpha = if (isMuted) 0.03f else 0.06f) else Color.Black.copy(alpha = if (isMuted) 0.03f else 0.05f)
 
     val targetColors = when (phase) {
         TimerPhase.WARMUP -> listOf(PhaseWarmupColor, Color(0xFFFFB74D))
-        TimerPhase.FOCUS -> listOf(PaceMagenta, PaceRaspberry)
-        TimerPhase.BREAK -> listOf(PhaseBreakColor, Color(0xFF64FFDA))
+        TimerPhase.FOCUS -> listOf(colorScheme.primaryColor, colorScheme.secondaryColor)
+        TimerPhase.BREAK -> if (isDark) {
+            listOf(Color(0xFFE2E8F0), Color(0xFF94A3B8))
+        } else {
+            listOf(Color(0xFF475569), Color(0xFF64748B))
+        }
         TimerPhase.COOLDOWN -> listOf(PhaseCooldownColor, Color(0xFF80DEEA))
-        TimerPhase.COMPLETED -> listOf(PaceMagenta, PaceRaspberry)
+        TimerPhase.COMPLETED -> listOf(PhaseCompletedColor, Color(0xFF81C784))
     }
 
     val arcAlpha = if (isMuted) (if (isDark) 0.32f else 0.38f) else 1.0f
