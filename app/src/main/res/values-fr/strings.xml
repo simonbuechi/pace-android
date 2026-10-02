@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Réagit à l\'inclinaison et aux mouvements de l\'appareil</string>
     <string name="bg_anim_none">Aucune (Statique)</string>
     <string name="bg_anim_none_desc">Dégradé pur sans mouvement</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">À propos</string>
+    <string name="setting_about_creator">Créé par Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Site du projet</string>
 </resources>

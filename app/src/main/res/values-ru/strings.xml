@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Интерактивная реакция на наклон устройства</string>
     <string name="bg_anim_none">Нет (Статический)</string>
     <string name="bg_anim_none_desc">Чистый градиент без движения</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">О приложении</string>
+    <string name="setting_about_creator">Создано Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Сайт проекта</string>
 </resources>

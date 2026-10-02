@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Reage interativamente à inclinação do dispositivo</string>
     <string name="bg_anim_none">Nenhuma (Estático)</string>
     <string name="bg_anim_none_desc">Gradiente limpo e estático</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">Sobre</string>
+    <string name="setting_about_creator">Criado por Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Site do projeto</string>
 </resources>

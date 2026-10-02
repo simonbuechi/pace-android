@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Reagerer interaktivt på enhedens hældning</string>
     <string name="bg_anim_none">Ingen (Statisk)</string>
     <string name="bg_anim_none_desc">Ren farveovergang uden bevægelse</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">Om</string>
+    <string name="setting_about_creator">Lavet af Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Projektwebsted</string>
 </resources>

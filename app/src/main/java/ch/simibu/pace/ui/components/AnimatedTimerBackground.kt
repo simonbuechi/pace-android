@@ -16,7 +16,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -170,7 +169,30 @@ fun AnimatedTimerBackground(
         label = "bg_bottom_color"
     )
 
-    when (animation) {
+    // Vibrant accent colors for high-contrast animated highlights and fluid waves
+    val activeAccentColor = when (phase) {
+        TimerPhase.BREAK -> if (isDark) Color(0xFF94A3B8) else Color(0xFF64748B)
+        TimerPhase.WARMUP -> PhaseWarmupColor
+        TimerPhase.FOCUS -> colorScheme.primaryColor
+        TimerPhase.COOLDOWN -> PhaseCooldownColor
+        TimerPhase.COMPLETED -> PhaseCompletedColor
+    }
+    val activeSecondaryColor = when (phase) {
+        TimerPhase.BREAK -> if (isDark) Color(0xFFCBD5E1) else Color(0xFF475569)
+        TimerPhase.WARMUP -> Color(0xFFFFB74D)
+        TimerPhase.FOCUS -> colorScheme.secondaryColor
+        TimerPhase.COOLDOWN -> Color(0xFF80DEEA)
+        TimerPhase.COMPLETED -> Color(0xFF81C784)
+    }
+
+    // Resolve APP_DEFAULT to BREATHING_AURA if not already resolved
+    val effectiveAnimation = if (animation == BackgroundAnimationOption.APP_DEFAULT) {
+        BackgroundAnimationOption.BREATHING_AURA
+    } else {
+        animation
+    }
+
+    when (effectiveAnimation) {
         BackgroundAnimationOption.NONE,
         BackgroundAnimationOption.APP_DEFAULT -> {
             Canvas(modifier = modifier.fillMaxSize()) {
@@ -185,14 +207,14 @@ fun AnimatedTimerBackground(
 
         BackgroundAnimationOption.BREATHING_AURA -> {
             val infiniteTransition = rememberInfiniteTransition(label = "breathing_aura")
-            val breathCycle by infiniteTransition.animateFloat(
+            val breathProgress by infiniteTransition.animateFloat(
                 initialValue = 0f,
-                targetValue = 2f * PI.toFloat(),
+                targetValue = 1f,
                 animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 4800, easing = LinearEasing),
-                    repeatMode = RepeatMode.Restart
+                    animation = tween(durationMillis = 3800, easing = FastOutSlowInEasing),
+                    repeatMode = RepeatMode.Reverse
                 ),
-                label = "breath_cycle"
+                label = "breath_progress"
             )
 
             Canvas(modifier = modifier.fillMaxSize()) {
@@ -200,25 +222,31 @@ fun AnimatedTimerBackground(
                 val h = size.height
                 val maxDim = max(w, h)
 
-                // Base vertical gradient
-                val verticalBrush = Brush.verticalGradient(
+                // 1. Dynamic base gradient that subtly breathes vertically
+                val topShift = h * 0.12f * (breathProgress - 0.5f)
+                val baseBrush = Brush.verticalGradient(
                     0.0f to animatedTopColor,
-                    0.55f to animatedMidColor,
-                    1.0f to animatedBottomColor
+                    (0.45f + 0.15f * breathProgress) to animatedMidColor,
+                    1.0f to animatedBottomColor,
+                    startY = topShift,
+                    endY = h + topShift
                 )
-                drawRect(brush = verticalBrush)
+                drawRect(brush = baseBrush)
 
-                // Pulsing ambient radial aura
-                val pulseRatio = (sin(breathCycle) + 1f) / 2f // 0f..1f
-                val auraRadius = maxDim * (0.55f + 0.25f * pulseRatio)
-                val auraCenter = Offset(w * 0.5f, h * (0.42f + 0.04f * sin(breathCycle * 0.5f)))
-                val auraAlpha = if (isDark) 0.35f + 0.20f * pulseRatio else 0.25f + 0.15f * pulseRatio
+                // 2. High-contrast pulsing radial breathing aura centered behind the clock
+                val centerOffset = Offset(
+                    x = w * 0.5f,
+                    y = h * 0.46f + h * 0.04f * (1f - breathProgress)
+                )
+                // Radius expands from 45% of screen up to 105% of screen!
+                val auraRadius = maxDim * (0.45f + 0.60f * breathProgress)
+                val auraAlpha = if (isDark) 0.50f + 0.35f * breathProgress else 0.40f + 0.30f * breathProgress
 
                 val auraBrush = Brush.radialGradient(
-                    0.0f to animatedTopColor.copy(alpha = auraAlpha),
-                    0.55f to animatedMidColor.copy(alpha = auraAlpha * 0.6f),
+                    0.0f to activeAccentColor.copy(alpha = auraAlpha),
+                    0.45f to animatedMidColor.copy(alpha = auraAlpha * 0.65f),
                     1.0f to Color.Transparent,
-                    center = auraCenter,
+                    center = centerOffset,
                     radius = auraRadius
                 )
                 drawRect(brush = auraBrush)
@@ -231,7 +259,7 @@ fun AnimatedTimerBackground(
                 initialValue = 0f,
                 targetValue = 2f * PI.toFloat(),
                 animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 11000, easing = LinearEasing),
+                    animation = tween(durationMillis = 9000, easing = LinearEasing),
                     repeatMode = RepeatMode.Restart
                 ),
                 label = "flow_phase"
@@ -240,43 +268,54 @@ fun AnimatedTimerBackground(
             Canvas(modifier = modifier.fillMaxSize()) {
                 val w = size.width
                 val h = size.height
+                val maxDim = max(w, h)
 
-                // Base vertical gradient
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        0.0f to animatedTopColor,
-                        0.55f to animatedMidColor,
-                        1.0f to animatedBottomColor
-                    )
+                // 1. Rotating, shifting orbital linear gradient
+                val angle = flowPhase
+                val start = Offset(
+                    x = w * (0.5f + 0.50f * cos(angle)),
+                    y = h * (0.5f + 0.50f * sin(angle))
+                )
+                val end = Offset(
+                    x = w * (0.5f - 0.50f * cos(angle)),
+                    y = h * (0.5f - 0.50f * sin(angle))
                 )
 
-                // Aurora lobe 1: Drifting from top-left towards center-right
-                val lobe1X = w * (0.35f + 0.25f * cos(flowPhase))
-                val lobe1Y = h * (0.30f + 0.20f * sin(flowPhase))
-                val lobe1Radius = max(w, h) * (0.60f + 0.15f * sin(flowPhase * 1.5f))
-                val alpha1 = if (isDark) 0.38f else 0.26f
+                val rotatingBrush = Brush.linearGradient(
+                    0.0f to animatedTopColor,
+                    (0.40f + 0.20f * sin(flowPhase)) to animatedMidColor,
+                    1.0f to animatedBottomColor,
+                    start = start,
+                    end = end
+                )
+                drawRect(brush = rotatingBrush)
+
+                // 2. Flowing Aurora Lobe 1 (Primary Accent) orbiting smoothly
+                val lobe1X = w * (0.45f + 0.38f * sin(flowPhase))
+                val lobe1Y = h * (0.40f + 0.28f * cos(flowPhase * 0.8f))
+                val lobe1Radius = maxDim * (0.55f + 0.15f * sin(flowPhase * 1.4f))
+                val lobe1Alpha = if (isDark) 0.52f else 0.40f
 
                 drawRect(
                     brush = Brush.radialGradient(
-                        0.0f to animatedMidColor.copy(alpha = alpha1),
-                        0.60f to animatedTopColor.copy(alpha = alpha1 * 0.4f),
+                        0.0f to activeAccentColor.copy(alpha = lobe1Alpha),
+                        0.55f to animatedMidColor.copy(alpha = lobe1Alpha * 0.45f),
                         1.0f to Color.Transparent,
                         center = Offset(lobe1X, lobe1Y),
                         radius = lobe1Radius
                     )
                 )
 
-                // Aurora lobe 2: Counter-drifting ambient glow
-                val lobe2X = w * (0.65f - 0.25f * sin(flowPhase * 0.8f))
-                val lobe2Y = h * (0.65f - 0.15f * cos(flowPhase * 0.8f))
-                val lobe2Radius = max(w, h) * (0.55f + 0.15f * cos(flowPhase))
-                val alpha2 = if (isDark) 0.32f else 0.22f
+                // 3. Counter-drifting Aurora Lobe 2 (Secondary Accent)
+                val lobe2X = w * (0.55f - 0.38f * cos(flowPhase * 0.7f))
+                val lobe2Y = h * (0.60f - 0.25f * sin(flowPhase * 0.9f))
+                val lobe2Radius = maxDim * (0.50f + 0.15f * cos(flowPhase))
+                val lobe2Alpha = if (isDark) 0.46f else 0.35f
 
                 drawRect(
                     brush = Brush.radialGradient(
-                        0.0f to animatedTopColor.copy(alpha = alpha2),
-                        0.50f to animatedBottomColor.copy(alpha = alpha2 * 0.35f),
-                        1.0f to Color.Transparent,
+                        0.0f to activeSecondaryColor.copy(alpha = lobe2Alpha),
+                        0.50f to Color.Transparent,
                         center = Offset(lobe2X, lobe2Y),
                         radius = lobe2Radius
                     )
@@ -287,49 +326,47 @@ fun AnimatedTimerBackground(
         BackgroundAnimationOption.HORIZON_GLOW -> {
             val smoothProgress by animateFloatAsState(
                 targetValue = progress.coerceIn(0f, 1f),
-                animationSpec = tween(durationMillis = 600, easing = FastOutSlowInEasing),
+                animationSpec = tween(durationMillis = 800, easing = FastOutSlowInEasing),
                 label = "horizon_progress"
             )
 
             Canvas(modifier = modifier.fillMaxSize()) {
                 val w = size.width
                 val h = size.height
+                val maxDim = max(w, h)
 
-                // Horizon rise from bottom up as timer elapses
-                // Progress 0: glow at y = 1.0 (bottom edge)
-                // Progress 1: glow rises to y = 0.1 (top edge)
-                val horizonY = h * (1.0f - 0.90f * smoothProgress)
-                val glowSpread = h * (0.45f + 0.35f * smoothProgress)
+                // Horizon line physically rises from y = 1.05 (bottom) to y = 0.05 (top) as time elapses
+                val horizonY = h * (1.05f - 0.95f * smoothProgress)
+                val spreadRadius = maxDim * (0.50f + 0.40f * smoothProgress)
 
-                // Base gradient
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        0.0f to animatedTopColor,
-                        0.55f to animatedMidColor,
-                        1.0f to animatedBottomColor
-                    )
+                // 1. Progress-driven vertical gradient where radiant top color takes over screen
+                val progressBrush = Brush.verticalGradient(
+                    0.0f to animatedBottomColor,
+                    (horizonY / h).coerceIn(0.1f, 0.9f) to animatedMidColor,
+                    1.0f to animatedTopColor
                 )
+                drawRect(brush = progressBrush)
 
-                // Radiant rising horizon aura
-                val glowAlpha = if (isDark) 0.48f else 0.34f
-                val horizonBrush = Brush.radialGradient(
-                    0.0f to animatedTopColor.copy(alpha = glowAlpha),
-                    0.45f to animatedMidColor.copy(alpha = glowAlpha * 0.65f),
+                // 2. High-intensity glowing horizon dawn bloom rising upwards
+                val glowAlpha = if (isDark) 0.60f else 0.46f
+                val horizonGlowBrush = Brush.radialGradient(
+                    0.0f to activeAccentColor.copy(alpha = glowAlpha),
+                    0.40f to activeSecondaryColor.copy(alpha = glowAlpha * 0.65f),
                     1.0f to Color.Transparent,
                     center = Offset(w * 0.5f, horizonY),
-                    radius = glowSpread
+                    radius = spreadRadius
                 )
-                drawRect(brush = horizonBrush)
+                drawRect(brush = horizonGlowBrush)
             }
         }
 
         BackgroundAnimationOption.METALLIC_SHEEN -> {
             val infiniteTransition = rememberInfiniteTransition(label = "metallic_sheen")
             val sweepProgress by infiniteTransition.animateFloat(
-                initialValue = -0.6f,
-                targetValue = 1.6f,
+                initialValue = -0.4f,
+                targetValue = 1.4f,
                 animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 5200, easing = FastOutSlowInEasing),
+                    animation = tween(durationMillis = 3800, easing = FastOutSlowInEasing),
                     repeatMode = RepeatMode.Restart
                 ),
                 label = "sheen_sweep"
@@ -338,28 +375,32 @@ fun AnimatedTimerBackground(
             Canvas(modifier = modifier.fillMaxSize()) {
                 val w = size.width
                 val h = size.height
+                val maxDim = max(w, h)
 
-                // Base gradient
-                drawRect(
-                    brush = Brush.verticalGradient(
-                        0.0f to animatedTopColor,
-                        0.55f to animatedMidColor,
-                        1.0f to animatedBottomColor
-                    )
+                // 1. Base vibrant gradient
+                val baseBrush = Brush.verticalGradient(
+                    0.0f to animatedTopColor,
+                    0.55f to animatedMidColor,
+                    1.0f to animatedBottomColor
                 )
+                drawRect(brush = baseBrush)
 
-                // Diagonal specular highlight band
+                // 2. Specular metallic reflection beam sweeping across diagonal
                 val sheenCenter = Offset(w * sweepProgress, h * sweepProgress)
-                val sheenStart = Offset(sheenCenter.x - w * 0.45f, sheenCenter.y - h * 0.45f)
-                val sheenEnd = Offset(sheenCenter.x + w * 0.45f, sheenCenter.y + h * 0.45f)
+                val bandSpan = maxDim * 0.35f
+                val sheenStart = Offset(sheenCenter.x - bandSpan, sheenCenter.y - bandSpan)
+                val sheenEnd = Offset(sheenCenter.x + bandSpan, sheenCenter.y + bandSpan)
 
-                val highlightColor = if (isDark) Color.White.copy(alpha = 0.22f) else Color.White.copy(alpha = 0.42f)
+                val highlightColor = if (isDark) Color.White.copy(alpha = 0.45f) else Color.White.copy(alpha = 0.65f)
+                val sheenGlow = activeSecondaryColor.copy(alpha = if (isDark) 0.35f else 0.40f)
 
                 val sheenBrush = Brush.linearGradient(
                     0.0f to Color.Transparent,
-                    0.40f to Color.Transparent,
+                    0.30f to Color.Transparent,
+                    0.45f to sheenGlow,
                     0.50f to highlightColor,
-                    0.60f to Color.Transparent,
+                    0.55f to sheenGlow,
+                    0.70f to Color.Transparent,
                     1.0f to Color.Transparent,
                     start = sheenStart,
                     end = sheenEnd
@@ -376,13 +417,13 @@ fun AnimatedTimerBackground(
             val smoothTiltX = remember { Animatable(0f) }
             val smoothTiltY = remember { Animatable(0f) }
 
-            // Infinite idle drift fallback when sensor is motionless or unavailable
+            // Continuous ambient oscillation keeping background alive when resting
             val infiniteTransition = rememberInfiniteTransition(label = "idle_drift")
             val idlePhase by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = 2f * PI.toFloat(),
                 animationSpec = infiniteRepeatable(
-                    animation = tween(durationMillis = 8000, easing = LinearEasing),
+                    animation = tween(durationMillis = 6000, easing = LinearEasing),
                     repeatMode = RepeatMode.Restart
                 ),
                 label = "idle_phase"
@@ -396,7 +437,6 @@ fun AnimatedTimerBackground(
                 val listener = object : SensorEventListener {
                     override fun onSensorChanged(event: SensorEvent?) {
                         event?.values?.let { v ->
-                            // Gravity / Accel: X is left/right (-9.8 to +9.8), Y is vertical tilt (-9.8 to +9.8)
                             val nx = (-v[0] / 9.8f).coerceIn(-1f, 1f)
                             val ny = (v[1] / 9.8f).coerceIn(-1f, 1f)
                             rawTiltX = nx
@@ -416,35 +456,35 @@ fun AnimatedTimerBackground(
                 }
             }
 
-            LaunchedEffect(rawTiltX, rawTiltY) {
-                smoothTiltX.animateTo(rawTiltX, tween(250, easing = LinearEasing))
+            LaunchedEffect(rawTiltX) {
+                smoothTiltX.animateTo(rawTiltX, tween(200, easing = LinearEasing))
             }
             LaunchedEffect(rawTiltY) {
-                smoothTiltY.animateTo(rawTiltY, tween(250, easing = LinearEasing))
+                smoothTiltY.animateTo(rawTiltY, tween(200, easing = LinearEasing))
             }
 
             Canvas(modifier = modifier.fillMaxSize()) {
                 val w = size.width
                 val h = size.height
+                val maxDim = max(w, h)
 
-                // Combine tilt with a tiny ambient drift so it stays visually alive even stationary
-                val combinedTiltX = smoothTiltX.value + 0.08f * cos(idlePhase)
-                val combinedTiltY = smoothTiltY.value + 0.08f * sin(idlePhase)
+                val combinedTiltX = (smoothTiltX.value + 0.15f * cos(idlePhase)).coerceIn(-1.2f, 1.2f)
+                val combinedTiltY = (smoothTiltY.value + 0.15f * sin(idlePhase)).coerceIn(-1.2f, 1.2f)
 
+                // Start and end coordinates of gradient tilt dynamically with device angle
                 val startOffset = Offset(
-                    x = w * (0.5f - 0.35f * combinedTiltX),
-                    y = 0f + h * 0.15f * combinedTiltY
+                    x = w * (0.5f - 0.55f * combinedTiltX),
+                    y = 0f + h * 0.35f * combinedTiltY
                 )
                 val endOffset = Offset(
-                    x = w * (0.5f + 0.35f * combinedTiltX),
-                    y = h + h * 0.15f * combinedTiltY
+                    x = w * (0.5f + 0.55f * combinedTiltX),
+                    y = h + h * 0.35f * combinedTiltY
                 )
 
-                // Tilt-shifted linear gradient
                 drawRect(
                     brush = Brush.linearGradient(
                         0.0f to animatedTopColor,
-                        0.55f to animatedMidColor,
+                        0.50f to animatedMidColor,
                         1.0f to animatedBottomColor,
                         start = startOffset,
                         end = endOffset
@@ -453,18 +493,18 @@ fun AnimatedTimerBackground(
 
                 // Dynamic light reflection bloom tracking tilt
                 val bloomCenter = Offset(
-                    x = w * (0.5f + 0.40f * combinedTiltX),
-                    y = h * (0.45f - 0.35f * combinedTiltY)
+                    x = w * (0.5f + 0.50f * combinedTiltX),
+                    y = h * (0.45f - 0.40f * combinedTiltY)
                 )
-                val bloomRadius = max(w, h) * 0.65f
-                val bloomAlpha = if (isDark) 0.30f else 0.22f
+                val bloomAlpha = if (isDark) 0.50f else 0.38f
 
                 drawRect(
                     brush = Brush.radialGradient(
-                        0.0f to animatedTopColor.copy(alpha = bloomAlpha),
-                        0.60f to Color.Transparent,
+                        0.0f to activeAccentColor.copy(alpha = bloomAlpha),
+                        0.45f to activeSecondaryColor.copy(alpha = bloomAlpha * 0.5f),
+                        1.0f to Color.Transparent,
                         center = bloomCenter,
-                        radius = bloomRadius
+                        radius = maxDim * 0.65f
                     )
                 )
             }

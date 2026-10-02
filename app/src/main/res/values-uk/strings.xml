@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Інтерактивна реакція на нахил пристрою</string>
     <string name="bg_anim_none">Немає (Статичний)</string>
     <string name="bg_anim_none_desc">Чистий градієнт без руху</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">Про додаток</string>
+    <string name="setting_about_creator">Створено Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Вебсайт проєкту</string>
 </resources>

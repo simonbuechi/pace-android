@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Reageert interactief op het kantelen van het toestel</string>
     <string name="bg_anim_none">Geen (Statisch)</string>
     <string name="bg_anim_none_desc">Strakke kleurovergang zonder beweging</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">Over</string>
+    <string name="setting_about_creator">Gemaakt door Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Projectwebsite</string>
 </resources>

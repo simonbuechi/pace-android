@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Interaktivní reakce na naklánění zařízení</string>
     <string name="bg_anim_none">Žádná (Statické)</string>
     <string name="bg_anim_none_desc">Čistý přechod bez pohybu</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">O aplikaci</string>
+    <string name="setting_about_creator">Vytvořil Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Web projektu</string>
 </resources>

@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Interaktivna reakcija na naginjanje uređaja</string>
     <string name="bg_anim_none">Nijedna (Statično)</string>
     <string name="bg_anim_none_desc">Čisti gradijent bez pokreta</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">O aplikaciji</string>
+    <string name="setting_about_creator">Izradio Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Web stranica projekta</string>
 </resources>

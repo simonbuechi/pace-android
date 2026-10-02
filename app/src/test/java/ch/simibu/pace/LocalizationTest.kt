@@ -15,7 +15,7 @@ class LocalizationTest {
 
     private val resDir = File("src/main/res").takeIf { it.exists() } ?: File("app/src/main/res")
 
-    private fun extractStringKeys(file: File): Map<String, String> {
+    private fun extractStringKeys(file: File, filterNonTranslatable: Boolean = false): Map<String, String> {
         val factory = DocumentBuilderFactory.newInstance()
         val builder = factory.newDocumentBuilder()
         val doc = builder.parse(file)
@@ -27,6 +27,9 @@ class LocalizationTest {
         for (i in 0 until stringNodes.length) {
             val node = stringNodes.item(i)
             if (node is Element) {
+                if (filterNonTranslatable && node.getAttribute("translatable") == "false") {
+                    continue
+                }
                 val name = node.getAttribute("name")
                 val text = node.textContent.trim()
                 map[name] = text
@@ -70,7 +73,7 @@ class LocalizationTest {
     @Test
     fun testAll20LanguagesHaveParityWithBaseStrings() {
         val baseFile = File(resDir, "values/strings.xml")
-        val baseKeys = extractStringKeys(baseFile)
+        val baseKeys = extractStringKeys(baseFile, filterNonTranslatable = true)
 
         val targetLanguages = listOf(
             "de", "fr", "es", "it", "pt", "nl", "pl", "uk", "ru", "tr",

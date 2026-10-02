@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Διαδραστική απόκριση στην κλίση της συσκευής</string>
     <string name="bg_anim_none">Καμία (Στατικό)</string>
     <string name="bg_anim_none_desc">Καθαρή διαβάθμιση χωρίς κίνηση</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">Σχετικά</string>
+    <string name="setting_about_creator">Δημιουργήθηκε από τον Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Ιστότοπος έργου</string>
 </resources>

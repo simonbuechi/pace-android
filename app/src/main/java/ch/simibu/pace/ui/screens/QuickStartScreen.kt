@@ -244,7 +244,8 @@ fun QuickStartScreen(
                     focusRepeats = settingsRepo.focusSoundRepeats.value,
                     breakSound = settingsRepo.breakSoundScheme.value,
                     breakRepeats = settingsRepo.breakSoundRepeats.value,
-                    color = ColorSchemeOption.PACE
+                    color = ColorSchemeOption.PACE,
+                    backgroundAnimation = settingsRepo.backgroundAnimation.value
                 )
                 PaceTimerService.start(context)
                 onStartSession()

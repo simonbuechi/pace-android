@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Reagerer interaktivt på enhetens helling</string>
     <string name="bg_anim_none">Ingen (Statisk)</string>
     <string name="bg_anim_none_desc">Ren fargeovergang uten bevegelse</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">Om</string>
+    <string name="setting_about_creator">Laget av Simon Büchi © 2026</string>
+    <string name="setting_about_project_site">Prosjektnettsted</string>
 </resources>

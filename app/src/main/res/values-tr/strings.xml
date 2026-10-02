@@ -134,4 +134,9 @@
     <string name="bg_anim_sensor_parallax_desc">Cihaz eğimine etkileşimli tepki</string>
     <string name="bg_anim_none">Yok (Statik)</string>
     <string name="bg_anim_none_desc">Hareketsiz sade degrade</string>
+
+    <!-- About Section -->
+    <string name="setting_about_title">Hakkında</string>
+    <string name="setting_about_creator">Simon Büchi tarafından oluşturuldu © 2026</string>
+    <string name="setting_about_project_site">Proje Web Sitesi</string>
 </resources>
